@@ -1,123 +1,85 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-HK">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>分帳神器 - 吃飯・車費・住宿輕鬆算</title>
+    <title>聚會與旅遊分帳神器</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <!-- Google Fonts: Inter & Noto Sans TC -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'Noto Sans TC', 'sans-serif'],
-                    },
-                    colors: {
-                        brand: {
-                            50: '#eef2ff',
-                            100: '#e0e7ff',
-                            500: '#6366f1',
-                            600: '#4f46e5',
-                            700: '#4338ca',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+    <!-- Inter Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Inter', 'Noto Sans TC', sans-serif;
-            background-color: #f8fafc;
-            color: #0f172a;
-            -webkit-tap-highlight-color: transparent;
-        }
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 9999px;
-        }
-        .fade-in {
-            animation: fadeIn 0.2s ease-out forwards;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        /* Custom scrollbars for clean mobile look */
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
     </style>
 </head>
-<body class="min-h-screen pb-24">
+<body class="min-h-screen pb-24 bg-slate-50 text-slate-800">
 
     <!-- Top Header -->
-    <header class="bg-gradient-to-r from-indigo-600 via-indigo-700 to-purple-700 text-white shadow-lg sticky top-0 z-30">
-        <div class="max-w-5xl mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-3">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-white/15 backdrop-blur flex items-center justify-center text-2xl shadow-inner">
+    <header class="bg-gradient-to-r from-indigo-600 via-indigo-700 to-purple-700 text-white shadow-md sticky top-0 z-30">
+        <div class="max-w-4xl mx-auto px-4 py-3.5 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3 min-w-0">
+                <div class="w-10 h-10 rounded-xl bg-white/15 backdrop-blur flex items-center justify-center text-xl shrink-0 shadow-inner">
                     <i class="ph-fill ph-receipt"></i>
                 </div>
-                <div>
-                    <div class="flex items-center gap-2">
-                        <h1 id="tripTitleDisplay" class="text-lg sm:text-xl font-bold tracking-tight cursor-pointer hover:underline flex items-center gap-1.5" onclick="openTitleModal()">
-                            <span>我的聚會與旅遊分帳</span>
-                            <i class="ph ph-pencil-simple text-sm opacity-75"></i>
-                        </h1>
-                    </div>
-                    <p class="text-xs text-indigo-100">逐步引導式智能分帳工具</p>
+                <div class="min-w-0">
+                    <h1 id="tripTitleDisplay" class="text-base sm:text-lg font-bold tracking-tight truncate cursor-pointer hover:underline flex items-center gap-1.5" onclick="openTitleModal()">
+                        <span class="truncate">我的聚會與旅遊分帳</span>
+                        <i class="ph ph-pencil-simple text-xs opacity-75 shrink-0"></i>
+                    </h1>
+                    <p class="text-[11px] text-indigo-100/90 truncate">輕量、靈活、免打字快速分帳</p>
                 </div>
             </div>
 
-            <div class="flex items-center gap-2">
-                <button onclick="copySummaryToClipboard()" class="bg-white/15 hover:bg-white/25 active:scale-95 transition text-white text-xs sm:text-sm font-medium px-3.5 py-2 rounded-xl flex items-center gap-1.5 backdrop-blur">
-                    <i class="ph ph-share-network text-base"></i>
-                    <span>複製分帳結果</span>
+            <div class="flex items-center gap-2 shrink-0">
+                <button onclick="copySummaryToClipboard()" class="bg-white/15 hover:bg-white/25 active:scale-95 transition text-white text-xs font-medium px-3 py-2 rounded-xl flex items-center gap-1.5 backdrop-blur">
+                    <i class="ph ph-share-network text-sm"></i>
+                    <span class="hidden sm:inline">複製結果</span>
                 </button>
-                <button onclick="openConfirmResetModal()" class="bg-rose-500/20 hover:bg-rose-500/40 active:scale-95 transition text-rose-100 text-xs sm:text-sm font-medium px-3 py-2 rounded-xl flex items-center gap-1 border border-rose-300/20" title="清空重設">
-                    <i class="ph ph-trash text-base"></i>
-                    <span class="hidden sm:inline">清空重設</span>
+                <button onclick="openConfirmResetModal()" class="bg-rose-500/20 hover:bg-rose-500/40 active:scale-95 transition text-rose-100 text-xs font-medium px-2.5 py-2 rounded-xl flex items-center gap-1 border border-rose-300/20" title="清空重設">
+                    <i class="ph ph-trash text-sm"></i>
+                    <span class="hidden sm:inline">重設</span>
                 </button>
             </div>
         </div>
     </header>
 
     <!-- Main Container -->
-    <main class="max-w-5xl mx-auto px-4 pt-5 space-y-6">
+    <main class="max-w-4xl mx-auto px-3.5 sm:px-4 pt-4 space-y-4">
 
         <!-- Overview Stats Cards -->
-        <section class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <section class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
             <!-- Total Expense -->
-            <div class="col-span-2 sm:col-span-1 bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between">
-                <div class="flex items-center justify-between text-slate-500 text-xs font-medium">
+            <div class="col-span-2 sm:col-span-1 bg-white p-3.5 rounded-2xl shadow-2xs border border-slate-200/60 flex flex-col justify-between">
+                <div class="flex items-center justify-between text-slate-500 text-[11px] font-medium">
                     <span>總支出金額</span>
-                    <span class="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-base">
+                    <span class="w-6 h-6 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm">
                         <i class="ph-fill ph-coins"></i>
                     </span>
                 </div>
                 <div class="mt-2">
-                    <div id="statTotalAmount" class="text-2xl font-bold text-slate-900">$0</div>
-                    <div id="statTotalCount" class="text-xs text-slate-400 mt-0.5">共 0 筆帳目・人均 $0</div>
+                    <div id="statTotalAmount" class="text-xl sm:text-2xl font-extrabold text-slate-900">$0</div>
+                    <div id="statTotalCount" class="text-[11px] text-slate-400 mt-0.5 truncate">共 0 筆・人均 $0</div>
                 </div>
             </div>
 
             <!-- Dining Stat -->
-            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between">
-                <div class="flex items-center justify-between text-slate-500 text-xs font-medium">
-                    <span>🍽️ 吃飯餐飲</span>
-                    <span id="statDiningPct" class="text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full text-[11px] font-semibold">0%</span>
+            <div class="bg-white p-3.5 rounded-2xl shadow-2xs border border-slate-200/60 flex flex-col justify-between">
+                <div class="flex items-center justify-between text-slate-500 text-[11px] font-medium">
+                    <span>🍽️ 吃飯</span>
+                    <span id="statDiningPct" class="text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded-md text-[10px] font-bold">0%</span>
                 </div>
                 <div class="mt-2">
-                    <div id="statDiningAmount" class="text-lg sm:text-xl font-bold text-slate-800">$0</div>
+                    <div id="statDiningAmount" class="text-base sm:text-lg font-bold text-slate-800">$0</div>
                     <div class="w-full bg-slate-100 h-1.5 rounded-full mt-2 overflow-hidden">
                         <div id="statDiningBar" class="bg-amber-500 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
                     </div>
@@ -125,13 +87,13 @@
             </div>
 
             <!-- Transport Stat -->
-            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between">
-                <div class="flex items-center justify-between text-slate-500 text-xs font-medium">
-                    <span>🚕 車費交通</span>
-                    <span id="statTransportPct" class="text-sky-600 bg-sky-50 px-2 py-0.5 rounded-full text-[11px] font-semibold">0%</span>
+            <div class="bg-white p-3.5 rounded-2xl shadow-2xs border border-slate-200/60 flex flex-col justify-between">
+                <div class="flex items-center justify-between text-slate-500 text-[11px] font-medium">
+                    <span>🚕 車費</span>
+                    <span id="statTransportPct" class="text-sky-600 bg-sky-50 px-1.5 py-0.5 rounded-md text-[10px] font-bold">0%</span>
                 </div>
                 <div class="mt-2">
-                    <div id="statTransportAmount" class="text-lg sm:text-xl font-bold text-slate-800">$0</div>
+                    <div id="statTransportAmount" class="text-base sm:text-lg font-bold text-slate-800">$0</div>
                     <div class="w-full bg-slate-100 h-1.5 rounded-full mt-2 overflow-hidden">
                         <div id="statTransportBar" class="bg-sky-500 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
                     </div>
@@ -139,13 +101,13 @@
             </div>
 
             <!-- Stay Stat -->
-            <div class="col-span-2 sm:col-span-1 bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between">
-                <div class="flex items-center justify-between text-slate-500 text-xs font-medium">
-                    <span>🏨 住宿與其他</span>
-                    <span id="statStayPct" class="text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full text-[11px] font-semibold">0%</span>
+            <div class="col-span-2 sm:col-span-1 bg-white p-3.5 rounded-2xl shadow-2xs border border-slate-200/60 flex flex-col justify-between">
+                <div class="flex items-center justify-between text-slate-500 text-[11px] font-medium">
+                    <span>🏨 住宿/其他</span>
+                    <span id="statStayPct" class="text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-md text-[10px] font-bold">0%</span>
                 </div>
                 <div class="mt-2">
-                    <div id="statStayAmount" class="text-lg sm:text-xl font-bold text-slate-800">$0</div>
+                    <div id="statStayAmount" class="text-base sm:text-lg font-bold text-slate-800">$0</div>
                     <div class="w-full bg-slate-100 h-1.5 rounded-full mt-2 overflow-hidden">
                         <div id="statStayBar" class="bg-emerald-500 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
                     </div>
@@ -154,12 +116,12 @@
         </section>
 
         <!-- Members Bar -->
-        <section class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-slate-100">
+        <section class="bg-white p-4 rounded-2xl shadow-2xs border border-slate-200/60">
             <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
                 <div class="flex items-center gap-2">
-                    <span class="w-7 h-7 rounded-lg bg-indigo-600 text-white font-bold text-xs flex items-center justify-center">1</span>
-                    <h2 class="font-bold text-slate-800 text-base">建立參與朋友名單</h2>
-                    <span id="memberCountBadge" class="bg-indigo-50 text-indigo-600 text-xs font-semibold px-2.5 py-0.5 rounded-full">0 人</span>
+                    <span class="w-6 h-6 rounded-lg bg-indigo-600 text-white font-bold text-xs flex items-center justify-center shrink-0">1</span>
+                    <h2 class="font-bold text-slate-800 text-sm sm:text-base">建立參與朋友名單</h2>
+                    <span id="memberCountBadge" class="bg-indigo-50 text-indigo-600 text-[11px] font-semibold px-2.5 py-0.5 rounded-full">0 人</span>
                 </div>
             </div>
 
@@ -170,24 +132,21 @@
                         type="text"
                         id="newMemberInput"
                         onkeydown="if(event.key==='Enter'){event.preventDefault(); handleAddMember(event, null);}"
-                        placeholder="輸入朋友名字 (或直接點下方色塊免打字新增)"
+                        placeholder="輸入名字 (例如：阿明)"
                         maxlength="12"
-                        class="flex-1 text-sm px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        class="flex-1 text-xs sm:text-sm px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50/50"
                     >
-                    <button type="button" onclick="handleAddMember(event, null)" class="bg-indigo-600 hover:bg-indigo-700 active:scale-95 transition text-white text-sm font-medium px-4 py-2.5 rounded-xl flex items-center gap-1 shrink-0 shadow-sm">
-                        <i class="ph-bold ph-plus text-base"></i>
-                        <span class="hidden sm:inline">加入名單</span>
+                    <button type="button" onclick="handleAddMember(event, null)" class="bg-indigo-600 hover:bg-indigo-700 active:scale-95 transition text-white text-xs sm:text-sm font-medium px-4 py-2.5 rounded-xl flex items-center gap-1.5 shrink-0 shadow-xs">
+                        <i class="ph-bold ph-plus text-sm"></i>
+                        <span>加入</span>
                     </button>
                 </div>
 
-                <!-- Instant Color Chips: Click to add member with color name directly -->
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200/60">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs font-semibold text-slate-700 flex items-center gap-1">
-                            <i class="ph-fill ph-palette text-indigo-500"></i>
-                            <span>點選色塊直接以「顏色代稱」加入名單：</span>
-                        </span>
-                        <span class="text-[11px] text-slate-400">事後可點擊名字改名</span>
+                <!-- Instant Color Chips -->
+                <div class="bg-slate-50/80 p-3 rounded-xl border border-slate-200/70">
+                    <div class="text-[11px] font-semibold text-slate-600 mb-2 flex items-center gap-1">
+                        <i class="ph-fill ph-palette text-indigo-500 text-sm"></i>
+                        <span>點擊色塊直接新增免打字成員：</span>
                     </div>
                     <div id="quickColorChips" class="grid grid-cols-4 sm:grid-cols-8 gap-2">
                         <!-- Populated by JS -->
@@ -196,25 +155,25 @@
             </div>
 
             <!-- Member Pills List -->
-            <div id="membersListContainer" class="flex flex-wrap gap-2 pt-3 mt-3 border-t border-slate-100">
+            <div id="membersListContainer" class="flex flex-wrap gap-1.5 pt-3 mt-3 border-t border-slate-100">
                 <!-- Populated by JS -->
             </div>
         </section>
 
         <!-- Main Grid: Left = Expense Form & List, Right = Settlement & Balance -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
 
-            <!-- Left Column: Add / Edit Expense & Expense History (7 cols on desktop) -->
-            <div class="lg:col-span-7 space-y-6">
+            <!-- Left Column: Add / Edit Expense & Expense History -->
+            <div class="lg:col-span-7 space-y-4">
 
                 <!-- Add Expense Card (Step-by-Step) -->
-                <section id="expenseFormSection" class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-                    <div class="flex items-center justify-between mb-4">
+                <section id="expenseFormSection" class="bg-white p-4 sm:p-5 rounded-2xl shadow-2xs border border-slate-200/60">
+                    <div class="flex items-center justify-between mb-3.5">
                         <div class="flex items-center gap-2">
-                            <span class="w-7 h-7 rounded-lg bg-indigo-600 text-white font-bold text-xs flex items-center justify-center">2</span>
-                            <h2 id="formHeaderTitle" class="font-bold text-slate-800 text-base sm:text-lg">新增分攤帳目（逐步建立）</h2>
+                            <span class="w-6 h-6 rounded-lg bg-indigo-600 text-white font-bold text-xs flex items-center justify-center shrink-0">2</span>
+                            <h2 id="formHeaderTitle" class="font-bold text-slate-800 text-sm sm:text-base">新增分攤帳目</h2>
                         </div>
-                        <button id="cancelEditBtn" onclick="resetExpenseForm()" class="hidden text-xs font-medium text-slate-500 hover:text-slate-700 bg-slate-100 px-3 py-1.5 rounded-lg">
+                        <button id="cancelEditBtn" onclick="resetExpenseForm()" class="hidden text-xs font-medium text-slate-500 hover:text-slate-700 bg-slate-100 px-2.5 py-1 rounded-lg">
                             取消編輯
                         </button>
                     </div>
@@ -224,155 +183,187 @@
 
                         <!-- Step A: Category Selector -->
                         <div>
-                            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">第一步：選擇分攤項目類別</label>
+                            <label class="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1.5">第一步：選擇分攤項目類別</label>
                             <div class="grid grid-cols-4 gap-2" id="categoryButtonsContainer">
-                                <button type="button" onclick="selectCategory('dining')" data-cat="dining" class="cat-btn flex flex-col items-center justify-center p-2.5 rounded-xl border-2 transition text-center">
-                                    <span class="text-xl mb-0.5">🍽️</span>
-                                    <span class="text-xs font-semibold">吃飯餐飲</span>
+                                <button type="button" onclick="selectCategory('dining')" data-cat="dining" class="cat-btn flex flex-col items-center justify-center p-2.5 rounded-xl border transition text-center">
+                                    <span class="text-xl mb-1">🍽️</span>
+                                    <span class="text-xs font-semibold">吃飯</span>
                                 </button>
-                                <button type="button" onclick="selectCategory('transport')" data-cat="transport" class="cat-btn flex flex-col items-center justify-center p-2.5 rounded-xl border-2 transition text-center">
-                                    <span class="text-xl mb-0.5">🚕</span>
-                                    <span class="text-xs font-semibold">車費交通</span>
+                                <button type="button" onclick="selectCategory('transport')" data-cat="transport" class="cat-btn flex flex-col items-center justify-center p-2.5 rounded-xl border transition text-center">
+                                    <span class="text-xl mb-1">🚕</span>
+                                    <span class="text-xs font-semibold">車費</span>
                                 </button>
-                                <button type="button" onclick="selectCategory('stay')" data-cat="stay" class="cat-btn flex flex-col items-center justify-center p-2.5 rounded-xl border-2 transition text-center">
-                                    <span class="text-xl mb-0.5">🏨</span>
-                                    <span class="text-xs font-semibold">住宿費用</span>
+                                <button type="button" onclick="selectCategory('stay')" data-cat="stay" class="cat-btn flex flex-col items-center justify-center p-2.5 rounded-xl border transition text-center">
+                                    <span class="text-xl mb-1">🏨</span>
+                                    <span class="text-xs font-semibold">住宿</span>
                                 </button>
-                                <button type="button" onclick="selectCategory('other')" data-cat="other" class="cat-btn flex flex-col items-center justify-center p-2.5 rounded-xl border-2 transition text-center">
-                                    <span class="text-xl mb-0.5">🎟️</span>
-                                    <span class="text-xs font-semibold">娛樂/其他</span>
+                                <button type="button" onclick="selectCategory('other')" data-cat="other" class="cat-btn flex flex-col items-center justify-center p-2.5 rounded-xl border transition text-center">
+                                    <span class="text-xl mb-1">🎟️</span>
+                                    <span class="text-xs font-semibold">其他</span>
                                 </button>
                             </div>
                         </div>
 
-                        <!-- Step B: Payer Selection (Who Paid First - Now Multi-Payer Supported) -->
+                        <!-- Step B: Payer Selection -->
                         <div class="pt-3 border-t border-slate-100">
-                            <div class="flex flex-wrap items-center justify-between gap-1 mb-2">
-                                <label class="block text-xs font-semibold text-slate-700">第二步：選擇預付款人 (支援多人共同代墊)</label>
-                                <span class="text-[11px] text-indigo-600 font-medium" id="payerModeHint">可點選多位代墊人</span>
+                            <div class="flex flex-wrap items-center justify-between gap-1 mb-1.5">
+                                <label class="block text-[11px] font-bold text-slate-600 uppercase tracking-wider">第二步：選擇預付款人 (支援多人代墊)</label>
+                                <span class="text-[10px] text-indigo-600 font-medium" id="payerModeHint">可多選</span>
                             </div>
-                            <div id="payerButtonsContainer" class="flex flex-wrap gap-2">
+                            <div id="payerButtonsContainer" class="flex flex-wrap gap-1.5">
+                                <!-- Populated by JS -->
+                            </div>
+                            <!-- Multi-payer percentage sliders & live amount display -->
+                            <div id="multiPayerSlidersContainer" class="hidden mt-2.5 bg-indigo-50/60 p-3.5 rounded-xl border border-indigo-200/80 space-y-3">
                                 <!-- Populated by JS -->
                             </div>
                         </div>
 
-                        <!-- Step C: Title & Amount -->
-                        <div class="pt-3 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-12 gap-3">
-                            <div class="sm:col-span-6">
-                                <label class="block text-xs font-semibold text-slate-700 mb-1">第三步：項目名稱 / 備註</label>
-                                <input
-                                    type="text"
-                                    id="expenseTitle"
-                                    required
-                                    placeholder="例如：火鍋晚餐、Uber 車費"
-                                    class="w-full text-sm px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                >
-                                <!-- Quick Preset Chips based on category -->
-                                <div id="quickPresetsContainer" class="flex flex-wrap gap-1.5 mt-2">
-                                    <!-- Filled by JS -->
+                        <!-- Step C: Title -->
+                        <div class="pt-3 border-t border-slate-100">
+                            <label class="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1">第三步：項目名稱 / 備註</label>
+                            <input
+                                type="text"
+                                id="expenseTitle"
+                                required
+                                placeholder="例如：火鍋晚餐、地鐵車票"
+                                class="w-full text-xs sm:text-sm px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50/50"
+                            >
+                            <!-- Quick Preset Chips -->
+                            <div id="quickPresetsContainer" class="flex flex-wrap gap-1.5 mt-2">
+                                <!-- Filled by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Step D: Currency & Amount -->
+                        <div class="pt-3 border-t border-slate-100 space-y-3">
+                            <div class="flex items-center justify-between">
+                                <label class="text-[11px] font-bold text-slate-600 uppercase tracking-wider">第四步：選擇幣種與金額</label>
+                                <span id="fxStatusText" class="text-[10px] text-emerald-600 font-medium">即時匯率同步中</span>
+                            </div>
+
+                            <!-- 4-1: Select Spending Currency -->
+                            <div class="bg-slate-50/80 p-3 rounded-xl border border-slate-200/70 space-y-2">
+                                <div class="text-[11px] font-semibold text-slate-600 flex items-center gap-1.5">
+                                    <span class="w-4 h-4 rounded-full bg-indigo-100 text-indigo-700 text-[10px] font-bold flex items-center justify-center">1</span>
+                                    <span>消費原始幣種：</span>
+                                </div>
+                                <div class="grid grid-cols-3 sm:grid-cols-6 gap-1.5" id="sourceCurrencyButtons">
+                                    <!-- Populated by JS -->
                                 </div>
                             </div>
 
-                            <div class="sm:col-span-6">
-                                <div class="flex items-center justify-between mb-1">
-                                    <label class="text-xs font-semibold text-slate-700">第四步：總金額 ($)</label>
-                                    <button type="button" onclick="applyServiceCharge()" class="text-[11px] font-medium text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-2 py-0.5 rounded-md transition flex items-center gap-1">
+                            <!-- 4-2: Enter Amount -->
+                            <div class="bg-slate-50/80 p-3 rounded-xl border border-slate-200/70 space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <div class="text-[11px] font-semibold text-slate-600 flex items-center gap-1.5">
+                                        <span class="w-4 h-4 rounded-full bg-indigo-100 text-indigo-700 text-[10px] font-bold flex items-center justify-center">2</span>
+                                        <span>金額 (<span id="sourceCurrencyLabel" class="text-indigo-600 font-bold">港幣</span>)：</span>
+                                    </div>
+                                    <button type="button" onclick="applyServiceCharge()" class="text-[10px] font-semibold text-indigo-600 hover:text-indigo-800 bg-indigo-100 hover:bg-indigo-200 px-2.5 py-1 rounded-lg transition flex items-center gap-1">
                                         <i class="ph-bold ph-magic-wand"></i>
                                         <span>+10% 服務費</span>
                                     </button>
                                 </div>
                                 <div class="relative">
-                                    <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">$</span>
+                                    <span id="sourceCurrencySymbol" class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-xs">HK$</span>
                                     <input
                                         type="number"
                                         inputmode="decimal"
-                                        id="expenseAmount"
-                                        step="0.01"
+                                        id="foreignInputAmount"
+                                        step="any"
                                         min="0.01"
-                                        required
-                                        oninput="handleAmountOrSplitChange()"
+                                        oninput="handleSourceAmountInput()"
                                         placeholder="0.00"
-                                        class="w-full text-base font-bold pl-8 pr-3.5 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                        class="w-full text-base sm:text-lg font-extrabold pl-12 pr-3.5 py-2.5 rounded-xl border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                     >
                                 </div>
-                                <!-- Foreign Currency & Live Rates Helper -->
-                                <div class="mt-2 space-y-2">
-                                    <div class="flex flex-wrap items-center justify-between gap-1">
-                                        <button type="button" onclick="toggleFxHelper()" class="text-xs text-indigo-600 hover:text-indigo-800 font-medium flex items-center gap-1 bg-indigo-50 px-2.5 py-1 rounded-lg transition">
-                                            <i class="ph ph-currency-circle-dollar text-base"></i>
-                                            <span>外幣換算與當日匯率</span>
-                                        </button>
-                                        <span id="fxStatusText" class="text-[10px] text-slate-400">點擊展開匯率換算</span>
+                            </div>
+
+                            <!-- 4-3: Convert to Target Currency -->
+                            <div class="bg-indigo-50/50 p-3.5 rounded-xl border border-indigo-200/80 space-y-3">
+                                <div class="flex flex-wrap items-center justify-between gap-1">
+                                    <div class="text-[11px] font-bold text-indigo-950 flex items-center gap-1.5">
+                                        <span class="w-4 h-4 rounded-full bg-indigo-600 text-white text-[10px] font-bold flex items-center justify-center">3</span>
+                                        <span>轉成結算幣種：</span>
                                     </div>
-                                    <div id="fxHelperBox" class="hidden p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2.5">
-                                        <div class="space-y-1">
-                                            <span class="block text-[11px] font-semibold text-slate-600">點選預設貨幣（自動帶入今日匯率）：</span>
-                                            <div class="grid grid-cols-3 gap-1.5" id="fxPresetButtons">
-                                                <button type="button" onclick="setFxPreset('CNY')" id="fxBtn_CNY" class="text-[11px] bg-white hover:bg-indigo-50 text-slate-700 px-2 py-1.5 rounded-lg border border-slate-200 font-medium transition text-center">
-                                                    🇨🇳 人民幣<br><span class="text-[10px] text-slate-400" id="fxRateLabel_CNY">--</span>
-                                                </button>
-                                                <button type="button" onclick="setFxPreset('JPY')" id="fxBtn_JPY" class="text-[11px] bg-white hover:bg-indigo-50 text-slate-700 px-2 py-1.5 rounded-lg border border-slate-200 font-medium transition text-center">
-                                                    🇯🇵 日元<br><span class="text-[10px] text-slate-400" id="fxRateLabel_JPY">--</span>
-                                                </button>
-                                                <button type="button" onclick="setFxPreset('TWD')" id="fxBtn_TWD" class="text-[11px] bg-white hover:bg-indigo-50 text-slate-700 px-2 py-1.5 rounded-lg border border-slate-200 font-medium transition text-center">
-                                                    🇹🇼 新台幣<br><span class="text-[10px] text-slate-400" id="fxRateLabel_TWD">--</span>
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div class="grid grid-cols-2 gap-2">
-                                            <div>
-                                                <label class="block text-[10px] font-medium text-slate-500">外幣消費金額</label>
-                                                <input type="number" inputmode="decimal" id="fxForeignAmount" step="any" placeholder="如: 1000" oninput="calculateFx()" class="w-full text-xs font-semibold px-2.5 py-1.5 rounded-lg border border-slate-200 mt-0.5 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                                            </div>
-                                            <div>
-                                                <label class="block text-[10px] font-medium text-slate-500">當日匯率 (可微調)</label>
-                                                <input type="number" inputmode="decimal" id="fxRate" step="any" placeholder="如: 1.09" oninput="calculateFx()" class="w-full text-xs font-semibold px-2.5 py-1.5 rounded-lg border border-slate-200 mt-0.5 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                                            </div>
+                                    <span id="currentRateBadge" class="text-[10px] text-indigo-700 bg-white px-2.5 py-0.5 rounded-md border border-indigo-100 font-medium">匯率 1.00</span>
+                                </div>
+
+                                <!-- Target Currency Buttons -->
+                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2" id="targetCurrencyButtons">
+                                    <!-- Populated by JS -->
+                                </div>
+
+                                <!-- Rate & Converted Final Amount Row -->
+                                <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 pt-1 items-center">
+                                    <div class="sm:col-span-5">
+                                        <label class="block text-[10px] font-medium text-slate-500 mb-1">匯率 (可微調)</label>
+                                        <input
+                                            type="number"
+                                            inputmode="decimal"
+                                            id="fxRate"
+                                            step="any"
+                                            oninput="calculateFx()"
+                                            class="w-full text-xs font-bold px-3 py-2 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                        >
+                                    </div>
+                                    <div class="sm:col-span-7">
+                                        <label class="block text-[10px] font-bold text-indigo-900 mb-1">
+                                            入帳總額 (<span id="targetCurrencyLabel">港幣</span>)
+                                        </label>
+                                        <div class="relative">
+                                            <span id="targetCurrencySymbol" class="absolute left-3.5 top-1/2 -translate-y-1/2 text-indigo-600 font-extrabold text-xs">HK$</span>
+                                            <input
+                                                type="number"
+                                                inputmode="decimal"
+                                                id="expenseAmount"
+                                                step="0.01"
+                                                min="0.01"
+                                                required
+                                                oninput="handleDirectTargetAmountInput()"
+                                                placeholder="0.00"
+                                                class="w-full text-sm sm:text-base font-extrabold text-indigo-900 pl-12 pr-3.5 py-2 rounded-xl border-2 border-indigo-300 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                            >
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Step D: Split Mode & Participants -->
-                        <div class="pt-2 border-t border-slate-100">
-                            <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
-                                <label class="text-xs font-semibold text-slate-700">第五步：分攤方式與參與對象</label>
-                                <div class="inline-flex bg-slate-100 p-1 rounded-xl text-xs font-medium">
-                                    <button type="button" onclick="setSplitMode('equal')" id="tabSplitEqual" class="px-2.5 py-1 rounded-lg transition">
-                                        平均分攤
-                                    </button>
-                                    <button type="button" onclick="setSplitMode('exact')" id="tabSplitExact" class="px-2.5 py-1 rounded-lg transition">
-                                        指定金額
-                                    </button>
-                                    <button type="button" onclick="setSplitMode('shares')" id="tabSplitShares" class="px-2.5 py-1 rounded-lg transition">
-                                        按份數/晚數
-                                    </button>
+                        <!-- Step E: Split Mode & Participants -->
+                        <div class="pt-3 border-t border-slate-100">
+                            <div class="flex flex-wrap items-center justify-between gap-1.5 mb-2.5">
+                                <label class="text-[11px] font-bold text-slate-600 uppercase tracking-wider">第五步：分攤方式與對象</label>
+                                <div class="inline-flex bg-slate-100 p-1 rounded-xl text-[11px] font-medium">
+                                    <button type="button" onclick="setSplitMode('equal')" id="tabSplitEqual" class="px-2.5 py-1 rounded-lg transition">平均</button>
+                                    <button type="button" onclick="setSplitMode('exact')" id="tabSplitExact" class="px-2.5 py-1 rounded-lg transition">指定金額</button>
+                                    <button type="button" onclick="setSplitMode('shares')" id="tabSplitShares" class="px-2.5 py-1 rounded-lg transition">按份數</button>
                                 </div>
                             </div>
 
-                            <!-- Helper bar for split selection -->
-                            <div class="flex items-center justify-between text-xs text-slate-500 mb-2 bg-slate-50 px-3 py-1.5 rounded-lg">
-                                <span id="splitModeHint">勾選有份參與這筆消費的朋友：</span>
-                                <div id="equalSelectActions" class="flex items-center gap-2">
-                                    <button type="button" onclick="toggleAllParticipants(true)" class="text-indigo-600 hover:underline font-medium">全選</button>
+                            <!-- Helper bar -->
+                            <div class="flex items-center justify-between text-[11px] text-slate-500 mb-2.5 bg-slate-50 px-3 py-2 rounded-xl">
+                                <span id="splitModeHint">勾選參與成員：</span>
+                                <div id="equalSelectActions" class="flex items-center gap-1.5">
+                                    <button type="button" onclick="toggleAllParticipants(true)" class="text-indigo-600 hover:underline font-semibold">全選</button>
                                     <span>·</span>
                                     <button type="button" onclick="toggleAllParticipants(false)" class="text-slate-500 hover:underline">全不選</button>
                                 </div>
                             </div>
 
                             <!-- Participants Dynamic Rows -->
-                            <div id="participantsSplitContainer" class="space-y-2 max-h-64 overflow-y-auto pr-1">
+                            <div id="participantsSplitContainer" class="space-y-2 max-h-60 overflow-y-auto pr-1">
                                 <!-- Populated by JS -->
                             </div>
 
                             <!-- Validation / Split Status Message -->
-                            <div id="splitValidationStatus" class="hidden mt-2 text-xs px-3 py-2 rounded-xl font-medium"></div>
+                            <div id="splitValidationStatus" class="hidden mt-2.5 text-xs px-3.5 py-2.5 rounded-xl font-medium"></div>
                         </div>
 
                         <!-- Submit Button -->
                         <div class="pt-2">
-                            <button type="submit" id="submitExpenseBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 active:scale-[0.99] transition text-white font-semibold py-3 px-4 rounded-xl shadow-md shadow-indigo-500/20 flex items-center justify-center gap-2">
+                            <button type="submit" id="submitExpenseBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 active:scale-[0.99] transition text-white font-semibold py-3.5 px-4 rounded-xl shadow-md shadow-indigo-500/20 flex items-center justify-center gap-2 text-sm sm:text-base">
                                 <i class="ph-bold ph-check-circle text-lg"></i>
                                 <span id="submitExpenseBtnText">加入這筆帳目紀錄</span>
                             </button>
@@ -381,16 +372,16 @@
                 </section>
 
                 <!-- Expense List Card -->
-                <section class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-                    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
-                        <div class="flex items-center gap-2">
-                            <i class="ph-fill ph-list-bullets text-indigo-600 text-xl"></i>
-                            <h2 class="font-bold text-slate-800 text-base sm:text-lg">已建立的帳目明細</h2>
+                <section class="bg-white p-4 sm:p-5 rounded-2xl shadow-2xs border border-slate-200/60">
+                    <div class="flex flex-wrap items-center justify-between gap-2.5 mb-3.5">
+                        <div class="flex items-center gap-1.5">
+                            <i class="ph-fill ph-list-bullets text-indigo-600 text-lg"></i>
+                            <h2 class="font-bold text-slate-800 text-sm sm:text-base">已建立的帳目明細</h2>
                         </div>
 
                         <!-- Category Filter Pills -->
-                        <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl text-xs font-medium overflow-x-auto">
-                            <button onclick="setFilterCategory('all')" data-filter="all" class="filter-btn px-2.5 py-1 rounded-lg transition bg-white text-slate-800 shadow-sm">全部</button>
+                        <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl text-[11px] font-medium overflow-x-auto">
+                            <button onclick="setFilterCategory('all')" data-filter="all" class="filter-btn px-2.5 py-1 rounded-lg transition bg-white text-slate-800 shadow-2xs font-semibold">全部</button>
                             <button onclick="setFilterCategory('dining')" data-filter="dining" class="filter-btn px-2.5 py-1 rounded-lg transition text-slate-600">🍽️ 吃飯</button>
                             <button onclick="setFilterCategory('transport')" data-filter="transport" class="filter-btn px-2.5 py-1 rounded-lg transition text-slate-600">🚕 車費</button>
                             <button onclick="setFilterCategory('stay')" data-filter="stay" class="filter-btn px-2.5 py-1 rounded-lg transition text-slate-600">🏨 住宿</button>
@@ -404,44 +395,55 @@
                 </section>
             </div>
 
-            <!-- Right Column: Settlement Recommendations & Individual Balances (5 cols on desktop) -->
-            <div class="lg:col-span-5 space-y-6 lg:sticky lg:top-20">
+            <!-- Right Column: Settlement & Balances -->
+            <div class="lg:col-span-5 space-y-4 lg:sticky lg:top-20">
 
-                <!-- Optimal Settlement Card (Who pays Whom) -->
-                <section class="bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-950 text-white p-5 rounded-2xl shadow-lg">
-                    <div class="flex items-center justify-between mb-3">
-                        <div class="flex items-center gap-2">
+                <!-- Optimal Settlement Card -->
+                <section class="bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-950 text-white p-4 sm:p-5 rounded-2xl shadow-lg">
+                    <div class="flex items-center justify-between mb-3.5">
+                        <div class="flex items-center gap-2.5">
                             <span class="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-lg">
                                 <i class="ph-fill ph-hand-coins"></i>
                             </span>
                             <div>
-                                <h2 class="font-bold text-base sm:text-lg leading-tight">最佳結算轉帳方案</h2>
-                                <p class="text-[11px] text-slate-300">自動計算最少轉帳次數，一鍵複製給朋友</p>
+                                <h2 class="font-bold text-sm sm:text-base leading-tight">最佳轉帳結算方案</h2>
+                                <p class="text-[10px] text-slate-300">點擊項目可標記已付清</p>
                             </div>
                         </div>
                     </div>
 
-                    <div id="settlementTransfersContainer" class="space-y-2.5 my-4">
+                    <!-- Quick Settlement Currency Switcher -->
+                    <div class="bg-white/10 p-2.5 rounded-xl mb-3.5 border border-white/10">
+                        <div class="text-[10px] text-slate-300 mb-1.5 flex items-center justify-between px-0.5">
+                            <span>切換結算幣種：</span>
+                            <span id="settlementCurrencyHint" class="text-emerald-300 font-semibold">港幣</span>
+                        </div>
+                        <div class="grid grid-cols-4 gap-1.5" id="settlementCurrencySwitcher">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <div id="settlementTransfersContainer" class="space-y-2.5 my-3.5">
                         <!-- Populated by JS -->
                     </div>
 
-                    <button onclick="copySummaryToClipboard()" class="w-full bg-emerald-500 hover:bg-emerald-600 active:scale-[0.99] transition text-slate-950 font-bold text-sm py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 shadow-sm">
+                    <button onclick="copySummaryToClipboard()" class="w-full bg-emerald-500 hover:bg-emerald-600 active:scale-[0.99] transition text-slate-950 font-bold text-xs sm:text-sm py-3 px-3 rounded-xl flex items-center justify-center gap-2 shadow-xs">
                         <i class="ph-bold ph-copy text-base"></i>
-                        <span>複製完整結算表 (WhatsApp / LINE 格式)</span>
+                        <span>複製完整結算表 (WhatsApp / LINE)</span>
                     </button>
                 </section>
 
                 <!-- Individual Member Balance Breakdown -->
-                <section class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="flex items-center gap-2">
-                            <i class="ph-fill ph-scales text-indigo-600 text-xl"></i>
-                            <h2 class="font-bold text-slate-800 text-base">每人收支明細</h2>
+                <section class="bg-white p-4 sm:p-5 rounded-2xl shadow-2xs border border-slate-200/60">
+                    <div class="flex items-center justify-between mb-3.5">
+                        <div class="flex items-center gap-1.5">
+                            <i class="ph-fill ph-scales text-indigo-600 text-lg"></i>
+                            <h2 class="font-bold text-slate-800 text-sm sm:text-base">每人收支明細</h2>
                         </div>
-                        <span class="text-xs text-slate-400">預付金額 vs 應攤金額</span>
+                        <span class="text-[11px] text-slate-400">先付 vs 應攤</span>
                     </div>
 
-                    <div id="memberBalancesContainer" class="space-y-3">
+                    <div id="memberBalancesContainer" class="space-y-2.5">
                         <!-- Populated by JS -->
                     </div>
                 </section>
@@ -450,1406 +452,1181 @@
         </div>
     </main>
 
-    <!-- Custom Modal: Edit Title -->
-    <div id="titleModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-xl fade-in">
-            <h3 class="font-bold text-slate-800 text-base mb-3">修改聚會 / 旅程名稱</h3>
-            <input type="text" id="tripTitleInput" maxlength="25" onkeydown="if(event.key==='Enter'){saveTripTitle();}" class="w-full text-sm px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4" placeholder="例如：東京五日四夜之旅">
-            <div class="flex justify-end gap-2">
-                <button onclick="closeTitleModal()" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100">取消</button>
-                <button onclick="saveTripTitle()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 text-white hover:bg-indigo-700">儲存</button>
+    <!-- Title Edit Modal -->
+    <div id="titleModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-2xs z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl p-5 max-w-sm w-full shadow-2xl space-y-4">
+            <h3 class="font-bold text-slate-900 text-base">修改聚會/旅遊名稱</h3>
+            <input type="text" id="tripTitleInput" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="例如：首爾五日遊、週五聚餐">
+            <div class="flex gap-2 justify-end pt-1">
+                <button onclick="closeTitleModal()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200">取消</button>
+                <button onclick="saveTripTitle()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 text-white hover:bg-indigo-700 shadow-xs">儲存</button>
             </div>
         </div>
     </div>
 
-    <!-- Custom Modal: Rename Member -->
-    <div id="renameMemberModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-xl fade-in">
-            <h3 class="font-bold text-slate-800 text-base mb-1">修改成員名稱</h3>
-            <p class="text-xs text-slate-400 mb-3">修改後，所有已建立的帳目明細也會自動同步更新。</p>
-            <input type="hidden" id="renamingMemberId" value="">
-            <input type="text" id="renameMemberInput" maxlength="12" onkeydown="if(event.key==='Enter'){saveMemberRename();}" class="w-full text-sm px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4" placeholder="輸入新名字">
-            <div class="flex justify-end gap-2">
-                <button onclick="closeRenameMemberModal()" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100">取消</button>
-                <button onclick="saveMemberRename()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 text-white hover:bg-indigo-700">儲存修改</button>
+    <!-- Confirm Reset Modal -->
+    <div id="resetModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-2xs z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl p-5 max-w-sm w-full shadow-2xl space-y-4 text-center">
+            <div class="w-12 h-12 bg-rose-100 text-rose-600 rounded-2xl flex items-center justify-center text-2xl mx-auto">
+                <i class="ph-fill ph-warning"></i>
+            </div>
+            <div>
+                <h3 class="font-bold text-slate-900 text-base">確定要清空所有資料嗎？</h3>
+                <p class="text-xs text-slate-500 mt-1">這將刪除所有建立的成員與帳目明細，無法復原。</p>
+            </div>
+            <div class="flex gap-2 justify-center pt-1">
+                <button onclick="closeConfirmResetModal()" class="flex-1 px-4 py-2.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200">取消</button>
+                <button onclick="executeReset()" class="flex-1 px-4 py-2.5 rounded-xl text-xs font-semibold bg-rose-600 text-white hover:bg-rose-700 shadow-xs">確認清空</button>
             </div>
         </div>
     </div>
 
-    <!-- Custom Modal: Confirm Clear / Reset -->
-    <div id="confirmResetModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-xl fade-in">
-            <div class="w-11 h-11 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-2xl mb-3">
-                <i class="ph-fill ph-warning-circle"></i>
-            </div>
-            <h3 class="font-bold text-slate-800 text-base">重設或清空目前帳目？</h3>
-            <p class="text-xs text-slate-500 mt-1 mb-4 leading-relaxed">
-                你可以選擇清空所有帳目紀錄（保留朋友名單），或者完全清空重新開始。
-            </p>
-            <div class="space-y-2">
-                <button onclick="clearExpensesOnly()" class="w-full py-2.5 px-4 rounded-xl text-xs font-semibold bg-rose-600 text-white hover:bg-rose-700 transition">
-                    只清空帳目紀錄 (保留朋友名單)
-                </button>
-                <button onclick="clearAllData()" class="w-full py-2.5 px-4 rounded-xl text-xs font-semibold bg-slate-800 text-white hover:bg-slate-900 transition">
-                    完全清空 (重設名單與帳目)
-                </button>
-                <button onclick="closeConfirmResetModal()" class="w-full py-2 px-4 rounded-xl text-xs font-medium text-slate-500 hover:bg-slate-100 transition">
-                    取消
-                </button>
+    <!-- Edit Member Name Modal -->
+    <div id="editMemberModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-2xs z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl p-5 max-w-sm w-full shadow-2xl space-y-4">
+            <h3 class="font-bold text-slate-900 text-base">修改成員名稱</h3>
+            <input type="hidden" id="editMemberOldName" value="">
+            <input type="text" id="editMemberNewInput" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="輸入真實名字">
+            <div class="flex gap-2 justify-between pt-1">
+                <button onclick="deleteMemberAction()" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-rose-50 text-rose-600 hover:bg-rose-100">刪除成員</button>
+                <div class="flex gap-2">
+                    <button onclick="closeEditMemberModal()" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200">取消</button>
+                    <button onclick="saveMemberName()" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-indigo-600 text-white hover:bg-indigo-700 shadow-xs">儲存</button>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Toast Notification -->
-    <div id="toastBox" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 hidden items-center gap-2 bg-slate-900 text-white text-xs sm:text-sm font-medium px-4 py-3 rounded-2xl shadow-xl border border-slate-700/60">
-        <i id="toastIcon" class="ph-fill ph-check-circle text-emerald-400 text-lg"></i>
-        <span id="toastMessage">操作成功</span>
+    <div id="toastNotification" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-4 py-2.5 rounded-2xl shadow-xl text-xs font-medium z-50 transition-all duration-300 opacity-0 pointer-events-none flex items-center gap-2">
+        <i class="ph-fill ph-check-circle text-emerald-400 text-base"></i>
+        <span id="toastMessage">已完成操作</span>
     </div>
 
+    <!-- JavaScript Application Logic -->
     <script>
-        // ==========================================
-        // Application State & Constants
-        // ==========================================
-        const STORAGE_KEY = 'party_split_app_state_v2';
-
-        const COLOR_PRESETS = [
-            { name: '小藍', dot: 'bg-indigo-500', classes: 'bg-indigo-100 text-indigo-700 border-indigo-200 hover:bg-indigo-200/70' },
-            { name: '小綠', dot: 'bg-emerald-500', classes: 'bg-emerald-100 text-emerald-700 border-emerald-200 hover:bg-emerald-200/70' },
-            { name: '小黃', dot: 'bg-amber-500', classes: 'bg-amber-100 text-amber-700 border-amber-200 hover:bg-amber-200/70' },
-            { name: '小紅', dot: 'bg-rose-500', classes: 'bg-rose-100 text-rose-700 border-rose-200 hover:bg-rose-200/70' },
-            { name: '小青', dot: 'bg-sky-500', classes: 'bg-sky-100 text-sky-700 border-sky-200 hover:bg-sky-200/70' },
-            { name: '小紫', dot: 'bg-purple-500', classes: 'bg-purple-100 text-purple-700 border-purple-200 hover:bg-purple-200/70' },
-            { name: '小湖', dot: 'bg-teal-500', classes: 'bg-teal-100 text-teal-700 border-teal-200 hover:bg-teal-200/70' },
-            { name: '小橘', dot: 'bg-orange-500', classes: 'bg-orange-100 text-orange-700 border-orange-200 hover:bg-orange-200/70' }
-        ];
-
-        const AVATAR_COLORS = COLOR_PRESETS.map(c => c.classes);
-
-        const CATEGORY_META = {
-            dining: {
-                label: '吃飯餐飲',
-                icon: '🍽️',
-                badgeClass: 'bg-amber-50 text-amber-700 border-amber-200',
-                activeBtnClass: 'border-amber-500 bg-amber-50/70 text-amber-900 shadow-xs',
-                presets: ['火鍋聚餐', '燒肉晚餐', '早午餐 Cafe', '居酒屋宵夜', '手搖飲品']
-            },
-            transport: {
-                label: '車費交通',
-                icon: '🚕',
-                badgeClass: 'bg-sky-50 text-sky-700 border-sky-200',
-                activeBtnClass: 'border-sky-500 bg-sky-50/70 text-sky-900 shadow-xs',
-                presets: ['Uber / 的士車費', '租車費用', '油費 & 過路費', '高鐵 / 火車票', '泊車費']
-            },
-            stay: {
-                label: '住宿費用',
-                icon: '🏨',
-                badgeClass: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-                activeBtnClass: 'border-emerald-500 bg-emerald-50/70 text-emerald-900 shadow-xs',
-                presets: ['酒店房費', 'Airbnb 包棟民宿', '溫泉旅館一泊二食', '露營營地費']
-            },
-            other: {
-                label: '娛樂/其他',
-                icon: '🎟️',
-                badgeClass: 'bg-purple-50 text-purple-700 border-purple-200',
-                activeBtnClass: 'border-purple-500 bg-purple-50/70 text-purple-900 shadow-xs',
-                presets: ['樂園門票', '唱 K / 派對房', '超市零食補給', '伴手禮公數']
-            }
-        };
-
-        let state = {
-            tripTitle: '我的聚會與旅遊分帳',
+        // Data Structure & State
+        let appData = {
+            title: "我的聚會與旅遊分帳",
             members: [],
             expenses: [],
-            settledKeys: {}, // tracks marked-as-paid transfers e.g. "m1_m2": true
-            liveRates: { CNY: 1.09, JPY: 0.052, TWD: 0.245 }, // fallback rates
-            selectedFxCurrency: null,
-            form: {
-                category: 'dining',
-                payerIds: [], // Supports multiple payers: array of member IDs
-                splitMode: 'equal', // 'equal' | 'exact' | 'shares'
-                participants: {}    // memberId -> { included: true, exactAmount: 0, shares: 1 }
-            },
-            filterCategory: 'all'
+            settlementCurrency: "HKD"
         };
 
-        // ==========================================
-        // Initialization, Storage & API Rate Fetching
-        // ==========================================
-        function initApp() {
-            loadStateFromStorage();
-            fetchLiveExchangeRates();
+        const availableColors = [
+            { label: "小藍", bg: "bg-blue-500", text: "text-white", border: "border-blue-600" },
+            { label: "小綠", bg: "bg-emerald-500", text: "text-white", border: "border-emerald-600" },
+            { label: "小黃", bg: "bg-amber-500", text: "text-white", border: "border-amber-600" },
+            { label: "小紅", bg: "bg-rose-500", text: "text-white", border: "border-rose-600" },
+            { label: "小紫", bg: "bg-purple-500", text: "text-white", border: "border-purple-600" },
+            { label: "小橙", bg: "bg-orange-500", text: "text-white", border: "border-orange-600" },
+            { label: "小青", bg: "bg-teal-500", text: "text-white", border: "border-teal-600" },
+            { label: "小粉", bg: "bg-pink-500", text: "text-white", border: "border-pink-600" }
+        ];
+
+        const currencies = {
+            HKD: { name: "港幣", symbol: "HKD$", rate: 1.0 },
+            CNY: { name: "人民幣", symbol: "¥", rate: 1.08 },
+            JPY: { name: "日元", symbol: "¥", rate: 0.052 },
+            TWD: { name: "新台幣", symbol: "NT$", rate: 0.24 },
+            KRW: { name: "韓元", symbol: "₩", rate: 0.0058 },
+            USD: { name: "美金", symbol: "US$", rate: 7.8 },
+        };
+
+        // Form active state variables
+        let currentCategory = "dining";
+        let currentSourceCurrency = "HKD";
+        let currentTargetCurrency = "HKD";
+        let currentSplitMode = "equal";
+        let currentFilterCategory = "all";
+        let selectedPayers = [];
+        let payerPercentages = {}; // { memberName: percentage }
+        let paidTransfers = {}; // { transferKey: true/false }
+
+        const categoryPresets = {
+            dining: ["火鍋晚餐", "下午茶", "居酒屋", "便利店零食", "早午餐"],
+            transport: ["地鐵/地鐵卡", "Uber 車費", "包車費用", "過海渡輪"],
+            stay: ["酒店住宿費", "民宿訂房", "溫泉旅館", "房型升級"],
+            other: ["景點門票", "租借裝備", "買手信", "其他雜費"]
+        };
+
+        // Initialize on load
+        window.addEventListener("DOMContentLoaded", () => {
+            loadFromLocalStorage();
+            fetchLiveRates();
+            renderQuickColorChips();
+            selectCategory('dining');
+            renderSourceCurrencyButtons();
+            renderTargetCurrencyButtons();
+            renderSettlementCurrencySwitcher();
+            renderQuickPresets();
             resetExpenseForm();
-            renderAll();
+            updateAllUI();
+        });
+
+        // LocalStorage helpers
+        function saveToLocalStorage() {
+            localStorage.setItem("splitAppData", JSON.stringify(appData));
+            localStorage.setItem("splitPaidTransfers", JSON.stringify(paidTransfers));
         }
 
-        function saveStateToStorage() {
-            try {
-                const payload = {
-                    tripTitle: state.tripTitle,
-                    members: state.members,
-                    expenses: state.expenses,
-                    settledKeys: state.settledKeys
-                };
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
-            } catch (e) {
-                console.debug('LocalStorage not available');
+        function loadFromLocalStorage() {
+            const saved = localStorage.getItem("splitAppData");
+            if (saved) {
+                try {
+                    appData = JSON.parse(saved);
+                } catch(e) {}
+            }
+            const savedTransfers = localStorage.getItem("splitPaidTransfers");
+            if (savedTransfers) {
+                try {
+                    paidTransfers = JSON.parse(savedTransfers);
+                } catch(e) {}
             }
         }
 
-        function loadStateFromStorage() {
+        // Fetch Live FX Rates if possible
+        async function fetchLiveRates() {
             try {
-                const raw = localStorage.getItem(STORAGE_KEY);
-                if (!raw) return;
-                const parsed = JSON.parse(raw);
-                if (parsed.tripTitle) state.tripTitle = parsed.tripTitle;
-                if (Array.isArray(parsed.members)) state.members = parsed.members;
-                if (Array.isArray(parsed.expenses)) state.expenses = parsed.expenses;
-                if (parsed.settledKeys && typeof parsed.settledKeys === 'object') state.settledKeys = parsed.settledKeys;
-            } catch (e) {
-                console.debug('Failed to load state from LocalStorage');
-            }
-        }
-
-        async function fetchLiveExchangeRates() {
-            updateFxRateLabels();
-            try {
-                const res = await fetch('https://open.er-api.com/v6/latest/HKD');
+                const res = await fetch("https://open.er-api.com/v6/latest/HKD");
                 const data = await res.json();
                 if (data && data.rates) {
-                    const r = data.rates;
-                    if (r.CNY) state.liveRates.CNY = Math.round((1 / r.CNY) * 10000) / 10000;
-                    if (r.JPY) state.liveRates.JPY = Math.round((1 / r.JPY) * 10000) / 10000;
-                    if (r.TWD) state.liveRates.TWD = Math.round((1 / r.TWD) * 10000) / 10000;
-                    document.getElementById('fxStatusText').textContent = '🟢 已連線當日即時匯率';
-                    updateFxRateLabels();
+                    currencies.HKD.rate = 1.0;
+                    if (data.rates.CNY) currencies.CNY.rate = Number((1 / data.rates.CNY).toFixed(4));
+                    if (data.rates.JPY) currencies.JPY.rate = Number((1 / data.rates.JPY).toFixed(5));
+                    if (data.rates.TWD) currencies.TWD.rate = Number((1 / data.rates.TWD).toFixed(4));
+                    if (data.rates.KRW) currencies.KRW.rate = Number((1 / data.rates.KRW).toFixed(5));
+                    if (data.rates.USD) currencies.USD.rate = Number((1 / data.rates.USD).toFixed(4));
+                    document.getElementById("fxStatusText").innerText = "即時匯率已更新";
+                    calculateFx();
                 }
-            } catch (e) {
-                document.getElementById('fxStatusText').textContent = '使用預設參考匯率';
-                updateFxRateLabels();
+            } catch(e) {
+                document.getElementById("fxStatusText").innerText = "使用內建預設匯率";
             }
         }
 
-        function updateFxRateLabels() {
-            const cnyEl = document.getElementById('fxRateLabel_CNY');
-            const jpyEl = document.getElementById('fxRateLabel_JPY');
-            const twdEl = document.getElementById('fxRateLabel_TWD');
-            if (cnyEl) cnyEl.textContent = `匯率 ${state.liveRates.CNY}`;
-            if (jpyEl) jpyEl.textContent = `匯率 ${state.liveRates.JPY}`;
-            if (twdEl) twdEl.textContent = `匯率 ${state.liveRates.TWD}`;
+        // Title Modal
+        function openTitleModal() {
+            document.getElementById("tripTitleInput").value = appData.title;
+            document.getElementById("titleModal").classList.remove("hidden");
+        }
+        function closeTitleModal() {
+            document.getElementById("titleModal").classList.add("hidden");
+        }
+        function saveTripTitle() {
+            const val = document.getElementById("tripTitleInput").value.trim();
+            if (val) {
+                appData.title = val;
+                document.getElementById("tripTitleDisplay").querySelector("span").innerText = val;
+                saveToLocalStorage();
+                showToast("已更新標題");
+            }
+            closeTitleModal();
         }
 
-        function syncFormParticipantsWithMembers() {
-            const nextParticipants = {};
-            state.members.forEach(m => {
-                if (state.form.participants[m.id]) {
-                    nextParticipants[m.id] = state.form.participants[m.id];
+        // Reset Modals
+        function openConfirmResetModal() {
+            document.getElementById("resetModal").classList.remove("hidden");
+        }
+        function closeConfirmResetModal() {
+            document.getElementById("resetModal").classList.add("hidden");
+        }
+        function executeReset() {
+            appData.members = [];
+            appData.expenses = [];
+            paidTransfers = {};
+            saveToLocalStorage();
+            resetExpenseForm();
+            closeConfirmResetModal();
+            updateAllUI();
+            showToast("已成功清空所有資料");
+        }
+
+        // Edit Member Modal
+        function openEditMemberModal(name) {
+            document.getElementById("editMemberOldName").value = name;
+            document.getElementById("editMemberNewInput").value = name;
+            document.getElementById("editMemberModal").classList.remove("hidden");
+        }
+        function closeEditMemberModal() {
+            document.getElementById("editMemberModal").classList.add("hidden");
+        }
+        function saveMemberName() {
+            const oldName = document.getElementById("editMemberOldName").value;
+            const newName = document.getElementById("editMemberNewInput").value.trim();
+            if (!newName) return;
+            if (newName !== oldName) {
+                if (appData.members.some(m => m.name === newName)) {
+                    showToast("此名字已經存在");
+                    return;
+                }
+                const mem = appData.members.find(m => m.name === oldName);
+                if (mem) mem.name = newName;
+
+                appData.expenses.forEach(exp => {
+                    if (exp.payers && exp.payers[oldName]) {
+                        exp.payers[newName] = exp.payers[oldName];
+                        delete exp.payers[oldName];
+                    }
+                    if (exp.splits && exp.splits[oldName] !== undefined) {
+                        exp.splits[newName] = exp.splits[oldName];
+                        delete exp.splits[oldName];
+                    }
+                });
+                saveToLocalStorage();
+                updateAllUI();
+                showToast("已更新成員名稱");
+            }
+            closeEditMemberModal();
+        }
+        function deleteMemberAction() {
+            const oldName = document.getElementById("editMemberOldName").value;
+            appData.members = appData.members.filter(m => m.name !== oldName);
+            appData.expenses.forEach(exp => {
+                if (exp.payers) delete exp.payers[oldName];
+                if (exp.splits) delete exp.splits[oldName];
+            });
+            saveToLocalStorage();
+            updateAllUI();
+            closeEditMemberModal();
+            showToast("已刪除成員");
+        }
+
+        // Toast Helper
+        function showToast(msg) {
+            const toast = document.getElementById("toastNotification");
+            document.getElementById("toastMessage").innerText = msg;
+            toast.classList.remove("opacity-0", "pointer-events-none");
+            setTimeout(() => {
+                toast.classList.add("opacity-0", "pointer-events-none");
+            }, 2500);
+        }
+
+        // Render Quick Color Chips
+        function renderQuickColorChips() {
+            const container = document.getElementById("quickColorChips");
+            container.innerHTML = "";
+            availableColors.forEach(c => {
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.className = `${c.bg} ${c.text} text-xs font-bold py-2 px-2.5 rounded-xl transition hover:opacity-90 active:scale-95 flex items-center justify-center gap-1 shadow-2xs`;
+                btn.innerHTML = `<i class="ph-bold ph-plus text-xs"></i><span>${c.label}</span>`;
+                btn.onclick = () => addMemberByColor(c);
+                container.appendChild(btn);
+            });
+        }
+
+        function addMemberByColor(colorObj) {
+            let baseName = colorObj.label;
+            let finalName = baseName;
+            let counter = 1;
+            while (appData.members.some(m => m.name === finalName)) {
+                counter++;
+                finalName = `${baseName}${counter}`;
+            }
+            appData.members.push({ name: finalName, color: colorObj });
+            if (selectedPayers.length === 0) {
+                selectedPayers = [finalName];
+            }
+            saveToLocalStorage();
+            updateAllUI();
+            showToast(`已加入 ${finalName}`);
+        }
+
+        function handleAddMember(e, colorObj) {
+            e.preventDefault();
+            const input = document.getElementById("newMemberInput");
+            const val = input.value.trim();
+            if (!val) return;
+            if (appData.members.some(m => m.name === val)) {
+                showToast("這位朋友已經在名單中了");
+                return;
+            }
+            const randomColor = availableColors[appData.members.length % availableColors.length];
+            appData.members.push({ name: val, color: randomColor });
+            if (selectedPayers.length === 0) {
+                selectedPayers = [val];
+            }
+            input.value = "";
+            saveToLocalStorage();
+            updateAllUI();
+            showToast(`已加入 ${val}`);
+        }
+
+        // Category Selection
+        function selectCategory(cat) {
+            currentCategory = cat;
+            document.querySelectorAll(".cat-btn").forEach(btn => {
+                if (btn.dataset.cat === cat) {
+                    btn.className = "cat-btn flex flex-col items-center justify-center p-2.5 rounded-xl border-2 border-indigo-600 bg-indigo-50/70 text-indigo-900 transition text-center shadow-xs";
                 } else {
-                    nextParticipants[m.id] = { included: true, exactAmount: '', shares: 1 };
+                    btn.className = "cat-btn flex flex-col items-center justify-center p-2.5 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-600 hover:bg-slate-100 transition text-center";
                 }
             });
-            state.form.participants = nextParticipants;
-
-            // Ensure payerIds is valid
-            if (!state.form.payerIds || !Array.isArray(state.form.payerIds)) {
-                state.form.payerIds = state.members[0] ? [state.members[0].id] : [];
-            } else {
-                state.form.payerIds = state.form.payerIds.filter(id => state.members.some(m => m.id === id));
-                if (state.form.payerIds.length === 0 && state.members.length > 0) {
-                    state.form.payerIds = [state.members[0].id];
-                }
-            }
-        }
-
-        // ==========================================
-        // Member Operations
-        // ==========================================
-        function handleAddMember(e, specificColorIdx = null) {
-            if (e) e.preventDefault();
-            const input = document.getElementById('newMemberInput');
-            let name = input.value.trim();
-
-            const colorIdx = specificColorIdx !== null ? specificColorIdx : (state.members.length % COLOR_PRESETS.length);
-
-            if (!name) {
-                // Use the color preset name if input is empty
-                name = COLOR_PRESETS[colorIdx].name;
-            }
-
-            if (state.members.some(m => m.name.toLowerCase() === name.toLowerCase())) {
-                let suffix = 2;
-                while (state.members.some(m => m.name.toLowerCase() === `${name}${suffix}`.toLowerCase())) {
-                    suffix++;
-                }
-                name = `${name}${suffix}`;
-            }
-
-            const newId = 'm_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
-            state.members.push({ id: newId, name, colorIdx });
-            input.value = '';
-
-            syncFormParticipantsWithMembers();
-            saveStateToStorage();
-            renderAll();
-            showToast(`已加入「${name}」`);
-        }
-
-        function addMemberByColor(colorIdx) {
-            // If user typed a name in input, use that name with the clicked color; otherwise use the color's name directly
-            handleAddMember(null, colorIdx);
-        }
-
-        function openRenameMemberModal(memberId) {
-            const member = state.members.find(m => m.id === memberId);
-            if (!member) return;
-            document.getElementById('renamingMemberId').value = member.id;
-            const input = document.getElementById('renameMemberInput');
-            input.value = member.name;
-            const modal = document.getElementById('renameMemberModal');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            input.focus();
-            input.select();
-        }
-
-        function closeRenameMemberModal() {
-            const modal = document.getElementById('renameMemberModal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        }
-
-        function saveMemberRename() {
-            const memberId = document.getElementById('renamingMemberId').value;
-            const newName = document.getElementById('renameMemberInput').value.trim();
-            if (!newName) {
-                showToast('名字不能為空', 'warning');
-                return;
-            }
-            const member = state.members.find(m => m.id === memberId);
-            if (member) {
-                member.name = newName;
-                saveStateToStorage();
-                renderAll();
-                showToast(`已更新成員名稱為「${newName}」`);
-            }
-            closeRenameMemberModal();
-        }
-
-        function removeMember(memberId) {
-            const isUsed = state.expenses.some(exp =>
-                (exp.payerIds && exp.payerIds.includes(memberId)) || exp.payerId === memberId || (exp.splits && exp.splits[memberId] > 0)
-            );
-            if (isUsed) {
-                showToast('這位朋友已有相關帳目紀錄，請先刪除或修改相關帳目', 'warning');
-                return;
-            }
-            const removed = state.members.find(m => m.id === memberId);
-            state.members = state.members.filter(m => m.id !== memberId);
-            syncFormParticipantsWithMembers();
-            saveStateToStorage();
-            renderAll();
-            if (removed) showToast(`已移除成員「${removed.name}」`);
-        }
-
-        // ==========================================
-        // Expense Form Controls (Step-by-Step)
-        // ==========================================
-        function selectCategory(cat) {
-            state.form.category = cat;
-            renderCategoryButtons();
             renderQuickPresets();
         }
 
-        function togglePayer(memberId) {
-            const idx = state.form.payerIds.indexOf(memberId);
-            if (idx > -1) {
-                if (state.form.payerIds.length > 1) {
-                    state.form.payerIds.splice(idx, 1);
-                } else {
-                    showToast('至少需要保留一位預付款人', 'warning');
-                }
-            } else {
-                state.form.payerIds.push(memberId);
-            }
-            renderPayerButtons();
-        }
-
-        function setSplitMode(mode) {
-            state.form.splitMode = mode;
-            const totalAmt = parseFloat(document.getElementById('expenseAmount').value) || 0;
-
-            if (mode === 'exact' && totalAmt > 0) {
-                const activeIds = state.members.filter(m => state.form.participants[m.id]?.included).map(m => m.id);
-                const hasAnyExact = activeIds.some(id => parseFloat(state.form.participants[id]?.exactAmount) > 0);
-                if (!hasAnyExact && activeIds.length > 0) {
-                    const equalPart = Math.round((totalAmt / activeIds.length) * 100) / 100;
-                    activeIds.forEach((id, idx) => {
-                        if (idx === activeIds.length - 1) {
-                            const prevSum = equalPart * (activeIds.length - 1);
-                            state.form.participants[id].exactAmount = Math.max(0, Math.round((totalAmt - prevSum) * 100) / 100);
-                        } else {
-                            state.form.participants[id].exactAmount = equalPart;
-                        }
-                    });
-                }
-            }
-
-            renderSplitTabsAndParticipants();
-        }
-
-        function toggleAllParticipants(includeAll) {
-            state.members.forEach(m => {
-                if (!state.form.participants[m.id]) {
-                    state.form.participants[m.id] = { included: includeAll, exactAmount: '', shares: 1 };
-                } else {
-                    state.form.participants[m.id].included = includeAll;
-                    if (includeAll && (!state.form.participants[m.id].shares || state.form.participants[m.id].shares <= 0)) {
-                        state.form.participants[m.id].shares = 1;
-                    }
-                }
+        function renderQuickPresets() {
+            const container = document.getElementById("quickPresetsContainer");
+            container.innerHTML = "";
+            const presets = categoryPresets[currentCategory] || [];
+            presets.forEach(p => {
+                const chip = document.createElement("button");
+                chip.type = "button";
+                chip.className = "text-[11px] font-medium bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 text-slate-600 px-2.5 py-1 rounded-lg transition border border-slate-200/60";
+                chip.innerText = p;
+                chip.onclick = () => {
+                    document.getElementById("expenseTitle").value = p;
+                };
+                container.appendChild(chip);
             });
-            renderSplitTabsAndParticipants();
         }
 
-        function toggleParticipantIncluded(memberId) {
-            const p = state.form.participants[memberId];
-            if (!p) return;
-            p.included = !p.included;
-            if (p.included && (!p.shares || p.shares <= 0)) {
-                p.shares = 1;
-            }
-            renderSplitTabsAndParticipants();
+        // Currency Buttons Rendering
+        function renderSourceCurrencyButtons() {
+            const container = document.getElementById("sourceCurrencyButtons");
+            container.innerHTML = "";
+            Object.keys(currencies).forEach(code => {
+                const cur = currencies[code];
+                const isSelected = code === currentSourceCurrency;
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.className = isSelected 
+                    ? "py-2 px-2 rounded-xl text-xs font-bold bg-indigo-600 text-white shadow-xs transition" 
+                    : "py-2 px-2 rounded-xl text-xs font-semibold bg-white text-slate-700 border border-slate-200 hover:bg-slate-100 transition";
+                btn.innerHTML = `<div>${code}</div><div class="text-[9px] opacity-80">${cur.name}</div>`;
+                btn.onclick = () => {
+                    currentSourceCurrency = code;
+                    document.getElementById("sourceCurrencyLabel").innerText = cur.name;
+                    document.getElementById("sourceCurrencySymbol").innerText = cur.symbol;
+                    renderSourceCurrencyButtons();
+                    calculateFx();
+                };
+                container.appendChild(btn);
+            });
         }
 
-        function updateParticipantExact(memberId, val) {
-            if (!state.form.participants[memberId]) return;
-            state.form.participants[memberId].exactAmount = val;
-            state.form.participants[memberId].included = parseFloat(val) > 0;
+        function renderTargetCurrencyButtons() {
+            const container = document.getElementById("targetCurrencyButtons");
+            container.innerHTML = "";
+            Object.keys(currencies).forEach(code => {
+                const cur = currencies[code];
+                const isSelected = code === currentTargetCurrency;
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.className = isSelected 
+                    ? "py-2 px-2 rounded-xl text-xs font-bold bg-indigo-600 text-white shadow-xs transition" 
+                    : "py-2 px-2 rounded-xl text-xs font-semibold bg-white text-slate-700 border border-slate-200 hover:bg-slate-100 transition";
+                btn.innerHTML = `<div>${code}</div><div class="text-[9px] opacity-80">${cur.name}</div>`;
+                btn.onclick = () => {
+                    currentTargetCurrency = code;
+                    document.querySelectorAll("#targetCurrencyLabel").forEach(el => el.innerText = cur.name);
+                    document.getElementById("targetCurrencySymbol").innerText = cur.symbol;
+                    renderTargetCurrencyButtons();
+                    calculateFx();
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        function renderSettlementCurrencySwitcher() {
+            const container = document.getElementById("settlementCurrencySwitcher");
+            container.innerHTML = "";
+            Object.keys(currencies).forEach(code => {
+                const cur = currencies[code];
+                const isSelected = code === appData.settlementCurrency;
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.className = isSelected 
+                    ? "py-1.5 px-2 rounded-lg text-xs font-bold bg-emerald-500 text-slate-950 shadow-xs transition" 
+                    : "py-1.5 px-2 rounded-lg text-xs font-medium bg-white/10 text-white hover:bg-white/20 transition";
+                btn.innerText = `${code}`;
+                btn.onclick = () => {
+                    appData.settlementCurrency = code;
+                    document.getElementById("settlementCurrencyHint").innerText = cur.name;
+                    renderSettlementCurrencySwitcher();
+                    updateAllUI();
+                };
+                container.appendChild(btn);
+            });
+            document.getElementById("settlementCurrencyHint").innerText = currencies[appData.settlementCurrency].name;
+        }
+
+        // FX Calculation
+        function calculateFx() {
+            const foreignInput = parseFloat(document.getElementById("foreignInputAmount").value) || 0;
+            const srcRate = currencies[currentSourceCurrency].rate;
+            const tgtRate = currencies[currentTargetCurrency].rate;
+            const exchangeRate = Number((srcRate / tgtRate).toFixed(4));
+            document.getElementById("fxRate").value = exchangeRate;
+            document.getElementById("currentRateBadge").innerText = `匯率 1 ${currentSourceCurrency} = ${exchangeRate} ${currentTargetCurrency}`;
+
+            const converted = Number((foreignInput * exchangeRate).toFixed(2));
+            document.getElementById("expenseAmount").value = converted > 0 ? converted : "";
             updateSplitPreviewAndValidation();
         }
 
-        function adjustParticipantShares(memberId, delta) {
-            const p = state.form.participants[memberId];
-            if (!p) return;
-            const next = Math.max(0, (parseFloat(p.shares) || 0) + delta);
-            p.shares = next;
-            p.included = next > 0;
-            renderSplitTabsAndParticipants();
+        function handleSourceAmountInput() {
+            calculateFx();
+        }
+
+        function handleDirectTargetAmountInput() {
+            updateSplitPreviewAndValidation();
         }
 
         function applyServiceCharge() {
-            const amountInput = document.getElementById('expenseAmount');
-            const current = parseFloat(amountInput.value);
-            if (!current || current <= 0) {
-                showToast('請先輸入消費金額，再按 +10% 服務費', 'warning');
+            const input = document.getElementById("foreignInputAmount");
+            let val = parseFloat(input.value) || 0;
+            if (val > 0) {
+                input.value = (val * 1.1).toFixed(2);
+                calculateFx();
+                showToast("已自動加計 +10% 服務費");
+            }
+        }
+
+        // Payer Selection & Multi-payer percentage sliders
+        function renderPayerButtons() {
+            const container = document.getElementById("payerButtonsContainer");
+            container.innerHTML = "";
+            if (appData.members.length === 0) {
+                container.innerHTML = `<span class="text-xs text-slate-400 italic">請先在上方新增參與朋友</span>`;
                 return;
             }
-            const withService = Math.round(current * 1.1 * 100) / 100;
-            amountInput.value = withService;
 
-            if (state.form.splitMode === 'exact') {
-                state.members.forEach(m => {
-                    const p = state.form.participants[m.id];
-                    if (p && parseFloat(p.exactAmount) > 0) {
-                        p.exactAmount = Math.round(parseFloat(p.exactAmount) * 1.1 * 100) / 100;
-                    }
-                });
+            appData.members.forEach(m => {
+                const isSelected = selectedPayers.includes(m.name);
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.className = isSelected
+                    ? `px-3 py-1.5 rounded-xl text-xs font-bold ${m.color.bg} text-white shadow-xs transition flex items-center gap-1.5 ring-2 ring-indigo-400`
+                    : `px-3 py-1.5 rounded-xl text-xs font-semibold bg-white text-slate-700 border border-slate-200 hover:bg-slate-100 transition flex items-center gap-1.5`;
+                btn.innerHTML = `<span class="w-2 h-2 rounded-full ${isSelected ? 'bg-white' : m.color.bg}"></span><span>${m.name}</span>`;
+                btn.onclick = () => togglePayer(m.name);
+                container.appendChild(btn);
+            });
+
+            const slidersContainer = document.getElementById("multiPayerSlidersContainer");
+            if (selectedPayers.length > 1) {
+                slidersContainer.classList.remove("hidden");
+                renderMultiPayerSliders();
+            } else {
+                slidersContainer.classList.add("hidden");
             }
-
-            renderSplitTabsAndParticipants();
-            showToast(`已自動加上 10% 服務費 ($${current} ➔ $${withService})`);
         }
 
-        function toggleFxHelper() {
-            const box = document.getElementById('fxHelperBox');
-            box.classList.toggle('hidden');
+        function togglePayer(name) {
+            const idx = selectedPayers.indexOf(name);
+            if (idx > -1) {
+                if (selectedPayers.length > 1) {
+                    selectedPayers.splice(idx, 1);
+                }
+            } else {
+                selectedPayers.push(name);
+            }
+            if (selectedPayers.length === 0 && appData.members.length > 0) {
+                selectedPayers = [appData.members[0].name];
+            }
+            initializePayerPercentages();
+            renderPayerButtons();
         }
 
-        function setFxPreset(curr) {
-            state.selectedFxCurrency = curr;
-            const rateInput = document.getElementById('fxRate');
-            if (curr === 'CNY') rateInput.value = state.liveRates.CNY || 1.09;
-            else if (curr === 'JPY') rateInput.value = state.liveRates.JPY || 0.052;
-            else if (curr === 'TWD') rateInput.value = state.liveRates.TWD || 0.245;
+        function initializePayerPercentages() {
+            payerPercentages = {};
+            if (selectedPayers.length === 0) return;
+            const equalPct = Number((100 / selectedPayers.length).toFixed(2));
+            let remainder = 100 - (equalPct * selectedPayers.length);
+            selectedPayers.forEach((p, idx) => {
+                payerPercentages[p] = equalPct + (idx === 0 ? remainder : 0);
+            });
+        }
 
-            ['CNY', 'JPY', 'TWD'].forEach(c => {
-                const btn = document.getElementById(`fxBtn_${c}`);
-                if (!btn) return;
-                if (c === curr) {
-                    btn.className = 'text-[11px] bg-indigo-50 text-indigo-700 px-2 py-1.5 rounded-lg border-2 border-indigo-500 font-bold transition text-center shadow-2xs';
+        function renderMultiPayerSliders() {
+            const container = document.getElementById("multiPayerSlidersContainer");
+            const totalAmount = parseFloat(document.getElementById("expenseAmount").value) || 0;
+            const sym = currencies[currentTargetCurrency].symbol;
+
+            let html = `
+                <div class="flex items-center justify-between text-xs font-bold text-indigo-950">
+                    <span>多人代墊比例分配 (合計 100%)</span>
+                    <button type="button" onclick="initializePayerPercentages(); renderMultiPayerSliders();" class="text-[11px] text-indigo-600 hover:underline">一鍵平均分配</button>
+                </div>
+            `;
+
+            selectedPayers.forEach(name => {
+                const pct = payerPercentages[name] || 0;
+                const amt = (totalAmount * (pct / 100)).toFixed(2);
+                html += `
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-xs font-semibold text-slate-700">
+                            <span>${name}</span>
+                            <span class="text-indigo-600 font-bold">${sym}${amt} (${pct.toFixed(1)}%)</span>
+                        </div>
+                        <input type="range" min="0" max="100" step="1" value="${pct}" oninput="updatePayerPercentage('${name}', this.value)" class="w-full accent-indigo-600 cursor-pointer">
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function updatePayerPercentage(name, val) {
+            const newVal = parseFloat(val) || 0;
+            payerPercentages[name] = newVal;
+            const others = selectedPayers.filter(p => p !== name);
+            if (others.length > 0) {
+                const remaining = 100 - newVal;
+                const sumOthers = others.reduce((acc, p) => acc + (payerPercentages[p] || 0), 0);
+                if (sumOthers > 0) {
+                    others.forEach(p => {
+                        payerPercentages[p] = Number(((payerPercentages[p] / sumOthers) * remaining).toFixed(1));
+                    });
                 } else {
-                    btn.className = 'text-[11px] bg-white hover:bg-indigo-50 text-slate-700 px-2 py-1.5 rounded-lg border border-slate-200 font-medium transition text-center';
+                    const split = remaining / others.length;
+                    others.forEach(p => payerPercentages[p] = Number(split.toFixed(1)));
+                }
+            }
+            renderMultiPayerSliders();
+        }
+
+        // Split Mode & Participants
+        function setSplitMode(mode) {
+            currentSplitMode = mode;
+            ["equal", "exact", "shares"].forEach(m => {
+                const btn = document.getElementById(`tabSplit${m.charAt(0).toUpperCase() + m.slice(1)}`);
+                if (m === mode) {
+                    btn.className = "px-3 py-1 rounded-lg transition bg-white text-indigo-900 font-bold shadow-2xs";
+                } else {
+                    btn.className = "px-3 py-1 rounded-lg transition text-slate-600 hover:text-slate-900";
                 }
             });
 
-            calculateFx();
-            const foreignInput = document.getElementById('fxForeignAmount');
-            if (!foreignInput.value) foreignInput.focus();
-            showToast(`已套用 ${curr} 當日匯率 (${rateInput.value})`);
-        }
-
-        function calculateFx() {
-            const foreign = parseFloat(document.getElementById('fxForeignAmount').value);
-            const rate = parseFloat(document.getElementById('fxRate').value);
-            if (foreign > 0 && rate > 0) {
-                const converted = Math.round(foreign * rate * 100) / 100;
-                document.getElementById('expenseAmount').value = converted;
-                handleAmountOrSplitChange();
+            const hint = document.getElementById("splitModeHint");
+            const selectActions = document.getElementById("equalSelectActions");
+            if (mode === 'equal') {
+                hint.innerText = "勾選參與平均分攤的成員：";
+                selectActions.classList.remove("hidden");
+            } else if (mode === 'exact') {
+                hint.innerText = "直接輸入每人應付金額：";
+                selectActions.classList.add("hidden");
+            } else if (mode === 'shares') {
+                hint.innerText = "設定每人所佔份數 (例如住幾晚)：";
+                selectActions.classList.add("hidden");
             }
+            renderParticipantsSplitInputs();
         }
 
-        function handleAmountOrSplitChange() {
-            renderPayerButtons();
+        function toggleAllParticipants(selectVal) {
+            const checkboxes = document.querySelectorAll(".participant-chk");
+            checkboxes.forEach(chk => {
+                chk.checked = selectVal;
+            });
             updateSplitPreviewAndValidation();
         }
 
-        function computeCurrentFormSplits() {
-            const totalAmt = parseFloat(document.getElementById('expenseAmount').value) || 0;
-            const mode = state.form.splitMode;
-            const splits = {};
-            let isValid = true;
-            let errorMessage = '';
-
-            if (state.members.length === 0) {
-                return { splits: {}, isValid: false, errorMessage: '請先在上方步驟一新增至少一位參與朋友' };
+        function renderParticipantsSplitInputs() {
+            const container = document.getElementById("participantsSplitContainer");
+            container.innerHTML = "";
+            if (appData.members.length === 0) {
+                container.innerHTML = `<div class="text-xs text-slate-400 italic py-2">請先新增成員</div>`;
+                return;
             }
 
-            if (mode === 'equal') {
-                const includedMembers = state.members.filter(m => state.form.participants[m.id]?.included);
-                if (includedMembers.length === 0) {
-                    return { splits: {}, isValid: false, errorMessage: '請至少勾選一位分攤成員' };
+            const totalAmount = parseFloat(document.getElementById("expenseAmount").value) || 0;
+            const sym = currencies[currentTargetCurrency].symbol;
+
+            appData.members.forEach((m, idx) => {
+                const row = document.createElement("div");
+                row.className = "flex items-center justify-between bg-slate-50 hover:bg-slate-100/80 p-2.5 rounded-xl border border-slate-200/60 transition";
+
+                if (currentSplitMode === 'equal') {
+                    row.innerHTML = `
+                        <label class="flex items-center gap-2.5 cursor-pointer flex-1">
+                            <input type="checkbox" data-member="${m.name}" checked onchange="updateSplitPreviewAndValidation()" class="participant-chk w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500">
+                            <span class="w-2.5 h-2.5 rounded-full ${m.color.bg}"></span>
+                            <span class="text-xs font-semibold text-slate-800">${m.name}</span>
+                        </label>
+                        <span class="preview-share-text text-xs font-bold text-slate-500" data-member="${m.name}">$0.00</span>
+                    `;
+                } else if (currentSplitMode === 'exact') {
+                    row.innerHTML = `
+                        <div class="flex items-center gap-2 flex-1">
+                            <span class="w-2.5 h-2.5 rounded-full ${m.color.bg}"></span>
+                            <span class="text-xs font-semibold text-slate-800">${m.name}</span>
+                        </div>
+                        <div class="relative w-32">
+                            <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-slate-400 font-bold">${sym}</span>
+                            <input type="number" inputmode="decimal" data-member="${m.name}" step="0.01" min="0" placeholder="0.00" oninput="updateSplitPreviewAndValidation()" class="exact-input w-full text-xs font-bold pl-7 pr-2.5 py-1.5 rounded-lg border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                    `;
+                } else if (currentSplitMode === 'shares') {
+                    row.innerHTML = `
+                        <div class="flex items-center gap-2 flex-1">
+                            <span class="w-2.5 h-2.5 rounded-full ${m.color.bg}"></span>
+                            <span class="text-xs font-semibold text-slate-800">${m.name}</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="relative w-24">
+                                <input type="number" inputmode="numeric" data-member="${m.name}" value="1" min="0" step="1" oninput="updateSplitPreviewAndValidation()" class="shares-input w-full text-xs font-bold px-2.5 py-1.5 rounded-lg border border-slate-300 bg-white text-center focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                            <span class="preview-share-text text-xs font-bold text-slate-500 w-20 text-right" data-member="${m.name}">$0.00</span>
+                        </div>
+                    `;
                 }
-                if (totalAmt > 0) {
-                    const baseShare = Math.floor((totalAmt / includedMembers.length) * 100) / 100;
-                    let distributed = 0;
-                    includedMembers.forEach((m, idx) => {
-                        if (idx === includedMembers.length - 1) {
-                            splits[m.id] = Math.round((totalAmt - distributed) * 100) / 100;
-                        } else {
-                            splits[m.id] = baseShare;
-                            distributed += baseShare;
-                        }
-                    });
-                }
-            } else if (mode === 'exact') {
-                let sumExact = 0;
-                state.members.forEach(m => {
-                    const val = parseFloat(state.form.participants[m.id]?.exactAmount) || 0;
-                    if (val > 0) {
-                        splits[m.id] = Math.round(val * 100) / 100;
-                        sumExact += splits[m.id];
-                    }
+                container.appendChild(row);
+            });
+            updateSplitPreviewAndValidation();
+        }
+
+        function updateSplitPreviewAndValidation() {
+            const totalAmount = parseFloat(document.getElementById("expenseAmount").value) || 0;
+            const statusBox = document.getElementById("splitValidationStatus");
+            const sym = currencies[currentTargetCurrency].symbol;
+
+            if (currentSplitMode === 'equal') {
+                const checkedBoxes = document.querySelectorAll(".participant-chk:checked");
+                const count = checkedBoxes.length;
+                const share = count > 0 ? totalAmount / count : 0;
+                document.querySelectorAll(".preview-share-text").forEach(el => {
+                    const memName = el.dataset.member;
+                    const chk = document.querySelector(`.participant-chk[data-member="${memName}"]`);
+                    const isChecked = chk ? chk.checked : false;
+                    el.innerText = isChecked ? `${sym}${share.toFixed(2)}` : `${sym}0.00`;
                 });
-                sumExact = Math.round(sumExact * 100) / 100;
-                if (Math.abs(sumExact - totalAmt) > 0.05) {
-                    isValid = false;
-                    const diff = Math.round((totalAmt - sumExact) * 100) / 100;
-                    if (diff > 0) {
-                        errorMessage = `指定金額合計 $${sumExact.toFixed(2)}，還差 $${diff.toFixed(2)} 才等於總金額`;
-                    } else {
-                        errorMessage = `指定金額合計 $${sumExact.toFixed(2)}，超出總金額 $${Math.abs(diff).toFixed(2)}`;
-                    }
+                if (count === 0) {
+                    statusBox.className = "mt-2 text-xs px-3 py-2 rounded-xl font-medium bg-rose-50 text-rose-700 border border-rose-200";
+                    statusBox.innerText = "⚠️ 請至少勾選一位參與分攤成員";
+                    statusBox.classList.remove("hidden");
+                } else {
+                    statusBox.classList.add("hidden");
                 }
-                if (sumExact === 0) {
-                    isValid = false;
-                    errorMessage = '請輸入每位成員應付的指定金額';
+            } else if (currentSplitMode === 'exact') {
+                let sum = 0;
+                document.querySelectorAll(".exact-input").forEach(inp => {
+                    sum += parseFloat(inp.value) || 0;
+                });
+                const diff = Math.abs(sum - totalAmount);
+                if (diff > 0.05 && totalAmount > 0) {
+                    statusBox.className = "mt-2 text-xs px-3 py-2 rounded-xl font-medium bg-amber-50 text-amber-800 border border-amber-200";
+                    statusBox.innerText = `⚠️ 指定金額總和 (${sym}${sum.toFixed(2)}) 與總額 (${sym}${totalAmount.toFixed(2)}) 不符，相差 ${sym}${diff.toFixed(2)}`;
+                    statusBox.classList.remove("hidden");
+                } else {
+                    statusBox.className = "mt-2 text-xs px-3 py-2 rounded-xl font-medium bg-emerald-50 text-emerald-700 border border-emerald-200";
+                    statusBox.innerText = `✓ 指定金額總和正確符合總額`;
+                    statusBox.classList.remove("hidden");
                 }
-            } else if (mode === 'shares') {
+            } else if (currentSplitMode === 'shares') {
                 let totalShares = 0;
-                state.members.forEach(m => {
-                    const sh = parseFloat(state.form.participants[m.id]?.shares) || 0;
-                    if (sh > 0) totalShares += sh;
+                document.querySelectorAll(".shares-input").forEach(inp => {
+                    totalShares += parseFloat(inp.value) || 0;
+                });
+                document.querySelectorAll(".preview-share-text").forEach(el => {
+                    const memName = el.dataset.member;
+                    const inp = document.querySelector(`.shares-input[data-member="${memName}"]`);
+                    const sh = inp ? (parseFloat(inp.value) || 0) : 0;
+                    const shareAmt = totalShares > 0 ? (totalAmount * (sh / totalShares)) : 0;
+                    el.innerText = `${sym}${shareAmt.toFixed(2)}`;
                 });
                 if (totalShares <= 0) {
-                    return { splits: {}, isValid: false, errorMessage: '總份數不能為 0，請至少為一位成員設定份數' };
-                }
-                if (totalAmt > 0) {
-                    let distributed = 0;
-                    const activeMembers = state.members.filter(m => (parseFloat(state.form.participants[m.id]?.shares) || 0) > 0);
-                    activeMembers.forEach((m, idx) => {
-                        const sh = parseFloat(state.form.participants[m.id]?.shares) || 0;
-                        if (idx === activeMembers.length - 1) {
-                            splits[m.id] = Math.round((totalAmt - distributed) * 100) / 100;
-                        } else {
-                            const portion = Math.round((totalAmt * (sh / totalShares)) * 100) / 100;
-                            splits[m.id] = portion;
-                            distributed += portion;
-                        }
-                    });
+                    statusBox.className = "mt-2 text-xs px-3 py-2 rounded-xl font-medium bg-rose-50 text-rose-700 border border-rose-200";
+                    statusBox.innerText = "⚠️ 總份數必須大於 0";
+                    statusBox.classList.remove("hidden");
+                } else {
+                    statusBox.classList.add("hidden");
                 }
             }
+        }
 
-            return { splits, isValid, errorMessage };
+        // Save Expense Form
+        function handleSaveExpense(e) {
+            e.preventDefault();
+            if (appData.members.length === 0) {
+                showToast("請先建立參與朋友名單");
+                return;
+            }
+
+            const title = document.getElementById("expenseTitle").value.trim();
+            const amount = parseFloat(document.getElementById("expenseAmount").value) || 0;
+            const editingId = document.getElementById("editingExpenseId").value;
+
+            if (!title || amount <= 0) {
+                showToast("請填寫完整的項目名稱與金額");
+                return;
+            }
+
+            let payers = {};
+            if (selectedPayers.length === 0) {
+                payers[appData.members[0].name] = amount;
+            } else if (selectedPayers.length === 1) {
+                payers[selectedPayers[0]] = amount;
+            } else {
+                let assigned = 0;
+                selectedPayers.forEach((p, idx) => {
+                    const pct = payerPercentages[p] || (100 / selectedPayers.length);
+                    const amt = idx === selectedPayers.length - 1 ? Number((amount - assigned).toFixed(2)) : Number((amount * (pct / 100)).toFixed(2));
+                    payers[p] = amt;
+                    assigned += amt;
+                });
+            }
+
+            let splits = {};
+            if (currentSplitMode === 'equal') {
+                const checked = document.querySelectorAll(".participant-chk:checked");
+                if (checked.length === 0) {
+                    showToast("請至少選擇一位分攤成員");
+                    return;
+                }
+                const share = amount / checked.length;
+                appData.members.forEach(m => {
+                    const chk = document.querySelector(`.participant-chk[data-member="${m.name}"]`);
+                    const isChecked = chk ? chk.checked : false;
+                    splits[m.name] = isChecked ? Number(share.toFixed(2)) : 0;
+                });
+            } else if (currentSplitMode === 'exact') {
+                let sum = 0;
+                document.querySelectorAll(".exact-input").forEach(inp => {
+                    const name = inp.dataset.member;
+                    const val = parseFloat(inp.value) || 0;
+                    splits[name] = val;
+                    sum += val;
+                });
+                if (Math.abs(sum - amount) > 0.1) {
+                    showToast("指定金額總和與總金額不符");
+                    return;
+                }
+            } else if (currentSplitMode === 'shares') {
+                let totalShares = 0;
+                let shareValues = {};
+                document.querySelectorAll(".shares-input").forEach(inp => {
+                    const name = inp.dataset.member;
+                    const sh = parseFloat(inp.value) || 0;
+                    shareValues[name] = sh;
+                    totalShares += sh;
+                });
+                if (totalShares <= 0) {
+                    showToast("總份數必須大於 0");
+                    return;
+                }
+                appData.members.forEach(m => {
+                    const sh = shareValues[m.name] || 0;
+                    splits[m.name] = Number((amount * (sh / totalShares)).toFixed(2));
+                });
+            }
+
+            const expenseObj = {
+                id: editingId ? editingId : "exp_" + Date.now(),
+                category: currentCategory,
+                title: title,
+                amount: amount,
+                currency: currentTargetCurrency,
+                payers: payers,
+                splits: splits,
+                createdAt: editingId ? (appData.expenses.find(x => x.id === editingId)?.createdAt || Date.now()) : Date.now()
+            };
+
+            if (editingId) {
+                const idx = appData.expenses.findIndex(x => x.id === editingId);
+                if (idx > -1) appData.expenses[idx] = expenseObj;
+                showToast("已更新帳目紀錄");
+            } else {
+                appData.expenses.unshift(expenseObj);
+                showToast("成功加入帳目紀錄");
+            }
+
+            saveToLocalStorage();
+            resetExpenseForm();
+            updateAllUI();
         }
 
         function resetExpenseForm() {
-            document.getElementById('editingExpenseId').value = '';
-            document.getElementById('expenseTitle').value = '';
-            document.getElementById('expenseAmount').value = '';
-            document.getElementById('fxForeignAmount').value = '';
-            document.getElementById('formHeaderTitle').textContent = '新增分攤帳目（逐步建立）';
-            document.getElementById('submitExpenseBtnText').textContent = '加入這筆帳目紀錄';
-            document.getElementById('cancelEditBtn').classList.add('hidden');
-
-            state.form.category = 'dining';
-            state.form.payerIds = state.members[0] ? [state.members[0].id] : [];
-            state.form.splitMode = 'equal';
-            state.form.participants = {};
-            state.members.forEach(m => {
-                state.form.participants[m.id] = { included: true, exactAmount: '', shares: 1 };
-            });
-
-            renderCategoryButtons();
-            renderQuickPresets();
+            document.getElementById("expenseForm").reset();
+            document.getElementById("editingExpenseId").value = "";
+            document.getElementById("formHeaderTitle").innerText = "新增分攤帳目";
+            document.getElementById("submitExpenseBtnText").innerText = "加入這筆帳目紀錄";
+            document.getElementById("cancelEditBtn").classList.add("hidden");
+            
+            selectedPayers = appData.members.length > 0 ? [appData.members[0].name] : [];
+            initializePayerPercentages();
+            selectCategory("dining");
+            currentSourceCurrency = "HKD";
+            currentTargetCurrency = "HKD";
+            currentSplitMode = "equal";
+            renderSourceCurrencyButtons();
+            renderTargetCurrencyButtons();
             renderPayerButtons();
-            renderSplitTabsAndParticipants();
+            setSplitMode("equal");
+            calculateFx();
         }
 
-        function handleSaveExpense(e) {
-            e.preventDefault();
-            const title = document.getElementById('expenseTitle').value.trim();
-            let amount = parseFloat(document.getElementById('expenseAmount').value);
-
-            if (state.members.length === 0) {
-                showToast('請先在上方「步驟一」新增參與朋友', 'warning');
-                return;
-            }
-
-            const { splits, isValid, errorMessage } = computeCurrentFormSplits();
-            if (!isValid) {
-                showToast(errorMessage || '請檢查分攤設定是否正確', 'warning');
-                return;
-            }
-            if (!amount || amount <= 0) {
-                showToast('請輸入大於 0 的總金額', 'warning');
-                return;
-            }
-            if (!state.form.payerIds || state.form.payerIds.length === 0) {
-                showToast('請至少選擇一位先付款的預付款人', 'warning');
-                return;
-            }
-
-            const editingId = document.getElementById('editingExpenseId').value;
-            const now = new Date();
-            const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
-            const rawConfig = JSON.parse(JSON.stringify(state.form.participants));
-            const payerIds = [...state.form.payerIds];
-
-            if (editingId) {
-                const idx = state.expenses.findIndex(x => x.id === editingId);
-                if (idx !== -1) {
-                    state.expenses[idx] = {
-                        ...state.expenses[idx],
-                        title,
-                        category: state.form.category,
-                        amount: Math.round(amount * 100) / 100,
-                        payerIds,
-                        payerId: payerIds[0], // backward compatibility
-                        splitMode: state.form.splitMode,
-                        splits,
-                        rawConfig
-                    };
-                }
-                showToast(`已更新「${title}」`);
-            } else {
-                const newExpense = {
-                    id: 'exp_' + Date.now(),
-                    title,
-                    category: state.form.category,
-                    amount: Math.round(amount * 100) / 100,
-                    payerIds,
-                    payerId: payerIds[0], // backward compatibility
-                    splitMode: state.form.splitMode,
-                    splits,
-                    rawConfig,
-                    createdAt: timeStr
-                };
-                state.expenses.unshift(newExpense);
-                showToast(`已成功加入「${title}」($${newExpense.amount})`);
-            }
-
-            state.settledKeys = {};
-            saveStateToStorage();
-            resetExpenseForm();
-            renderAll();
-        }
-
-        function editExpense(expenseId) {
-            const exp = state.expenses.find(x => x.id === expenseId);
+        function editExpense(id) {
+            const exp = appData.expenses.find(x => x.id === id);
             if (!exp) return;
 
-            document.getElementById('editingExpenseId').value = exp.id;
-            document.getElementById('expenseTitle').value = exp.title;
-            document.getElementById('expenseAmount').value = exp.amount;
-            document.getElementById('formHeaderTitle').textContent = '編輯分攤帳目';
-            document.getElementById('submitExpenseBtnText').textContent = '儲存帳目修改';
-            document.getElementById('cancelEditBtn').classList.remove('hidden');
+            document.getElementById("editingExpenseId").value = exp.id;
+            document.getElementById("formHeaderTitle").innerText = "編輯分攤帳目";
+            document.getElementById("submitExpenseBtnText").innerText = "儲存修改";
+            document.getElementById("cancelEditBtn").classList.remove("hidden");
 
-            state.form.category = exp.category;
-            state.form.payerIds = exp.payerIds && Array.isArray(exp.payerIds) ? [...exp.payerIds] : (exp.payerId ? [exp.payerId] : [state.members[0]?.id]);
-            state.form.splitMode = exp.splitMode || 'equal';
+            selectCategory(exp.category);
+            document.getElementById("expenseTitle").value = exp.title;
+            
+            currentTargetCurrency = exp.currency || "HKD";
+            currentSourceCurrency = currentTargetCurrency;
+            renderSourceCurrencyButtons();
+            renderTargetCurrencyButtons();
 
-            state.form.participants = {};
-            state.members.forEach(m => {
-                if (exp.rawConfig && exp.rawConfig[m.id]) {
-                    state.form.participants[m.id] = JSON.parse(JSON.stringify(exp.rawConfig[m.id]));
-                } else {
-                    const amt = exp.splits[m.id] || 0;
-                    state.form.participants[m.id] = {
-                        included: amt > 0,
-                        exactAmount: amt > 0 ? amt : '',
-                        shares: amt > 0 ? 1 : 0
-                    };
-                }
-            });
+            document.getElementById("foreignInputAmount").value = exp.amount;
+            document.getElementById("expenseAmount").value = exp.amount;
+            calculateFx();
 
-            renderCategoryButtons();
-            renderQuickPresets();
+            selectedPayers = Object.keys(exp.payers || {});
+            initializePayerPercentages();
             renderPayerButtons();
-            renderSplitTabsAndParticipants();
 
-            document.getElementById('expenseFormSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            setSplitMode("equal");
+            setTimeout(() => {
+                appData.members.forEach(m => {
+                    const val = exp.splits[m.name] || 0;
+                    const chk = document.querySelector(`.participant-chk[data-member="${m.name}"]`);
+                    if (chk) chk.checked = val > 0;
+                });
+                updateSplitPreviewAndValidation();
+            }, 50);
+
+            document.getElementById("expenseFormSection").scrollIntoView({ behavior: 'smooth' });
         }
 
-        function deleteExpense(expenseId) {
-            const exp = state.expenses.find(x => x.id === expenseId);
-            state.expenses = state.expenses.filter(x => x.id !== expenseId);
-            state.settledKeys = {};
-            if (document.getElementById('editingExpenseId').value === expenseId) {
-                resetExpenseForm();
-            }
-            saveStateToStorage();
-            renderAll();
-            if (exp) showToast(`已刪除「${exp.title}」`);
+        function deleteExpense(id) {
+            appData.expenses = appData.expenses.filter(x => x.id !== id);
+            saveToLocalStorage();
+            updateAllUI();
+            showToast("已刪除帳目");
         }
 
         function setFilterCategory(cat) {
-            state.filterCategory = cat;
-            document.querySelectorAll('.filter-btn').forEach(btn => {
+            currentFilterCategory = cat;
+            document.querySelectorAll(".filter-btn").forEach(btn => {
                 if (btn.dataset.filter === cat) {
-                    btn.className = 'filter-btn px-2.5 py-1 rounded-lg transition bg-white text-slate-800 shadow-sm font-semibold';
+                    btn.className = "filter-btn px-2.5 py-1 rounded-lg transition bg-white text-slate-800 shadow-2xs font-semibold";
                 } else {
-                    btn.className = 'filter-btn px-2.5 py-1 rounded-lg transition text-slate-600 hover:text-slate-900';
+                    btn.className = "filter-btn px-2.5 py-1 rounded-lg transition text-slate-600";
                 }
             });
             renderExpensesList();
         }
 
-        // ==========================================
-        // Core Math: Balances & Debt Simplification
-        // ==========================================
-        function calculateBalancesAndSettlements() {
-            const balances = {};
-            state.members.forEach(m => {
-                balances[m.id] = {
-                    member: m,
-                    paid: 0,
-                    owed: 0,
-                    net: 0
-                };
+        function updateAllUI() {
+            renderMembersList();
+            renderPayerButtons();
+            renderParticipantsSplitInputs();
+            renderExpensesList();
+            renderStatsAndSettlements();
+        }
+
+        function renderMembersList() {
+            const container = document.getElementById("membersListContainer");
+            container.innerHTML = "";
+            document.getElementById("memberCountBadge").innerText = `${appData.members.length} 人`;
+
+            if (appData.members.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-400 italic py-1">尚未加入任何朋友，請點擊上方色塊或輸入名字快速新增。</p>`;
+                return;
+            }
+
+            appData.members.forEach(m => {
+                const pill = document.createElement("button");
+                pill.type = "button";
+                pill.className = `px-3 py-1.5 rounded-xl text-xs font-bold ${m.color.bg} text-white shadow-2xs flex items-center gap-1.5 hover:opacity-90 active:scale-95 transition cursor-pointer`;
+                pill.innerHTML = `<span>${m.name}</span><i class="ph-bold ph-pencil-simple text-[10px] opacity-75"></i>`;
+                pill.onclick = () => openEditMemberModal(m.name);
+                container.appendChild(pill);
+            });
+        }
+
+        function renderExpensesList() {
+            const container = document.getElementById("expensesListContainer");
+            container.innerHTML = "";
+
+            const filtered = appData.expenses.filter(exp => currentFilterCategory === 'all' || exp.category === currentFilterCategory);
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="text-center py-8 text-slate-400 text-xs italic">尚無相關帳目明細</div>`;
+                return;
+            }
+
+            filtered.forEach(exp => {
+                const catIcons = { dining: "🍽️", transport: "🚕", stay: "🏨", other: "🎟️" };
+                const sym = currencies[exp.currency || "HKD"].symbol;
+                const payersStr = Object.entries(exp.payers).map(([k, v]) => `${k} ($${v})`).join("、");
+
+                const div = document.createElement("div");
+                div.className = "bg-slate-50/80 hover:bg-slate-100/80 p-3.5 rounded-2xl border border-slate-200/70 transition space-y-2";
+                div.innerHTML = `
+                    <div class="flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="w-8 h-8 rounded-xl bg-white shadow-2xs border border-slate-200 flex items-center justify-center text-base shrink-0">${catIcons[exp.category] || '📦'}</span>
+                            <div class="min-w-0">
+                                <h3 class="font-bold text-slate-900 text-xs sm:text-sm truncate">${exp.title}</h3>
+                                <p class="text-[11px] text-slate-500 truncate">代墊：${payersStr}</p>
+                            </div>
+                        </div>
+                        <div class="text-right shrink-0">
+                            <div class="font-extrabold text-slate-900 text-sm sm:text-base">${sym}${exp.amount.toFixed(2)}</div>
+                            <div class="flex items-center justify-end gap-2 mt-1">
+                                <button onclick="editExpense('${exp.id}')" class="text-[11px] text-indigo-600 hover:underline font-semibold">編輯</button>
+                                <span class="text-slate-300">·</span>
+                                <button onclick="deleteExpense('${exp.id}')" class="text-[11px] text-rose-600 hover:underline font-semibold">刪除</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function renderStatsAndSettlements() {
+            let totalAmount = 0;
+            let catTotals = { dining: 0, transport: 0, stay: 0, other: 0 };
+
+            const targetCur = appData.settlementCurrency;
+            const targetSym = currencies[targetCur].symbol;
+            let paidMap = {};
+            let shareMap = {};
+
+            appData.members.forEach(m => {
+                paidMap[m.name] = 0;
+                shareMap[m.name] = 0;
             });
 
-            state.expenses.forEach(exp => {
-                const pIds = exp.payerIds && Array.isArray(exp.payerIds) && exp.payerIds.length > 0
-                    ? exp.payerIds
-                    : (exp.payerId ? [exp.payerId] : []);
+            appData.expenses.forEach(exp => {
+                const expCur = exp.currency || "HKD";
+                const rateToTarget = currencies[expCur].rate / currencies[targetCur].rate;
+                const convertedAmt = exp.amount * rateToTarget;
 
-                if (pIds.length > 0) {
-                    const sharePerPayer = exp.amount / pIds.length;
-                    pIds.forEach(pId => {
-                        if (balances[pId]) {
-                            balances[pId].paid += sharePerPayer;
-                        }
-                    });
+                totalAmount += convertedAmt;
+                if (exp.category === 'dining') {
+                    catTotals.dining += convertedAmt;
+                } else if (exp.category === 'transport') {
+                    catTotals.transport += convertedAmt;
+                } else if (exp.category === 'stay') {
+                    catTotals.stay += convertedAmt;
+                } else {
+                    catTotals.other += convertedAmt;
                 }
 
-                Object.entries(exp.splits || {}).forEach(([mId, shareAmt]) => {
-                    if (balances[mId]) {
-                        balances[mId].owed += shareAmt;
+                Object.entries(exp.payers).forEach(([name, amt]) => {
+                    if (paidMap[name] !== undefined) {
+                        paidMap[name] += amt * rateToTarget;
+                    }
+                });
+
+                Object.entries(exp.splits).forEach(([name, amt]) => {
+                    if (shareMap[name] !== undefined) {
+                        shareMap[name] += amt * rateToTarget;
                     }
                 });
             });
 
-            const debtors = [];
-            const creditors = [];
+            const totalCount = appData.expenses.length;
+            const avgPerPerson = appData.members.length > 0 ? totalAmount / appData.members.length : 0;
 
-            Object.values(balances).forEach(b => {
-                b.paid = Math.round(b.paid * 100) / 100;
-                b.owed = Math.round(b.owed * 100) / 100;
-                b.net = Math.round((b.paid - b.owed) * 100) / 100;
+            document.getElementById("statTotalAmount").innerText = `${targetSym}${totalAmount.toFixed(2)}`;
+            document.getElementById("statTotalCount").innerText = `共 ${totalCount} 筆・人均 ${targetSym}${avgPerPerson.toFixed(2)}`;
 
-                if (b.net < -0.01) {
-                    debtors.push({ id: b.member.id, name: b.member.name, amount: Math.abs(b.net) });
-                } else if (b.net > 0.01) {
-                    creditors.push({ id: b.member.id, name: b.member.name, amount: b.net });
-                }
+            const diningTot = catTotals.dining;
+            const transportTot = catTotals.transport;
+            const stayOtherTot = catTotals.stay + catTotals.other;
+
+            const diningPct = totalAmount > 0 ? Math.round((diningTot / totalAmount) * 100) : 0;
+            const transportPct = totalAmount > 0 ? Math.round((transportTot / totalAmount) * 100) : 0;
+            const stayPct = totalAmount > 0 ? Math.round((stayOtherTot / totalAmount) * 100) : 0;
+
+            document.getElementById("statDiningAmount").innerText = `${targetSym}${diningTot.toFixed(2)}`;
+            document.getElementById("statDiningPct").innerText = `${diningPct}%`;
+            document.getElementById("statDiningBar").style.width = `${diningPct}%`;
+
+            document.getElementById("statTransportAmount").innerText = `${targetSym}${transportTot.toFixed(2)}`;
+            document.getElementById("statTransportPct").innerText = `${transportPct}%`;
+            document.getElementById("statTransportBar").style.width = `${transportPct}%`;
+
+            document.getElementById("statStayAmount").innerText = `${targetSym}${stayOtherTot.toFixed(2)}`;
+            document.getElementById("statStayPct").innerText = `${stayPct}%`;
+            document.getElementById("statStayBar").style.width = `${stayPct}%`;
+
+            let netMap = {};
+            appData.members.forEach(m => {
+                netMap[m.name] = (paidMap[m.name] || 0) - (shareMap[m.name] || 0);
+            });
+
+            const balanceContainer = document.getElementById("memberBalancesContainer");
+            balanceContainer.innerHTML = "";
+            if (appData.members.length === 0) {
+                balanceContainer.innerHTML = `<div class="text-xs text-slate-400 italic py-2">尚無成員資料</div>`;
+            } else {
+                appData.members.forEach(m => {
+                    const paid = paidMap[m.name] || 0;
+                    const share = shareMap[m.name] || 0;
+                    const net = netMap[m.name] || 0;
+                    const isPositive = net >= 0;
+
+                    const row = document.createElement("div");
+                    row.className = "bg-slate-50 p-3 rounded-xl border border-slate-200/60 flex items-center justify-between";
+                    row.innerHTML = `
+                        <div class="flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full ${m.color.bg}"></span>
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-xs sm:text-sm">${m.name}</h4>
+                                <p class="text-[10px] text-slate-500">先付 ${targetSym}${paid.toFixed(2)}・應攤 ${targetSym}${share.toFixed(2)}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-xs font-extrabold ${isPositive ? 'text-emerald-600' : 'text-rose-600'}">
+                                ${isPositive ? '+' : ''}${targetSym}${net.toFixed(2)}
+                            </span>
+                            <div class="text-[9px] text-slate-400">${isPositive ? '實收' : '實付'}</div>
+                        </div>
+                    `;
+                    balanceContainer.appendChild(row);
+                });
+            }
+
+            let debtors = [];
+            let creditors = [];
+            appData.members.forEach(m => {
+                const net = netMap[m.name] || 0;
+                if (net < -0.01) debtors.push({ name: m.name, amount: -net });
+                if (net > 0.01) creditors.push({ name: m.name, amount: net });
             });
 
             debtors.sort((a, b) => b.amount - a.amount);
             creditors.sort((a, b) => b.amount - a.amount);
 
-            const transfers = [];
-            let i = 0;
-            let j = 0;
+            let transfers = [];
+            let dIdx = 0, cIdx = 0;
+            while (dIdx < debtors.length && cIdx < creditors.length) {
+                let debtor = debtors[dIdx];
+                let creditor = creditors[cIdx];
+                let transferAmt = Math.min(debtor.amount, creditor.amount);
 
-            while (i < debtors.length && j < creditors.length) {
-                const debtor = debtors[i];
-                const creditor = creditors[j];
-                const transferAmount = Math.round(Math.min(debtor.amount, creditor.amount) * 100) / 100;
-
-                if (transferAmount > 0.01) {
+                if (transferAmt > 0.01) {
                     transfers.push({
-                        fromId: debtor.id,
-                        fromName: debtor.name,
-                        toId: creditor.id,
-                        toName: creditor.name,
-                        amount: transferAmount,
-                        key: `${debtor.id}_${creditor.id}`
+                        from: debtor.name,
+                        to: creditor.name,
+                        amount: transferAmt
                     });
                 }
 
-                debtor.amount = Math.round((debtor.amount - transferAmount) * 100) / 100;
-                creditor.amount = Math.round((creditor.amount - transferAmount) * 100) / 100;
+                debtor.amount -= transferAmt;
+                creditor.amount -= transferAmt;
 
-                if (debtor.amount <= 0.01) i++;
-                if (creditor.amount <= 0.01) j++;
+                if (debtor.amount < 0.01) dIdx++;
+                if (creditor.amount < 0.01) cIdx++;
             }
 
-            return { balances, transfers };
-        }
+            const settlementContainer = document.getElementById("settlementTransfersContainer");
+            settlementContainer.innerHTML = "";
 
-        function toggleTransferSettled(key) {
-            state.settledKeys[key] = !state.settledKeys[key];
-            saveStateToStorage();
-            renderSettlementAndBalances();
-        }
-
-        // ==========================================
-        // Rendering Functions
-        // ==========================================
-        function renderAll() {
-            document.getElementById('tripTitleDisplay').querySelector('span').textContent = state.tripTitle;
-            renderStats();
-            renderMembers();
-            renderCategoryButtons();
-            renderQuickPresets();
-            renderPayerButtons();
-            renderSplitTabsAndParticipants();
-            renderExpensesList();
-            renderSettlementAndBalances();
-        }
-
-        function renderStats() {
-            let total = 0;
-            let dining = 0;
-            let transport = 0;
-            let stayOther = 0;
-
-            state.expenses.forEach(exp => {
-                total += exp.amount;
-                if (exp.category === 'dining') dining += exp.amount;
-                else if (exp.category === 'transport') transport += exp.amount;
-                else stayOther += exp.amount;
-            });
-
-            const memberCount = Math.max(1, state.members.length);
-            const avgPerPerson = total / memberCount;
-
-            document.getElementById('statTotalAmount').textContent = `$${formatMoney(total)}`;
-            document.getElementById('statTotalCount').textContent = `共 ${state.expenses.length} 筆帳目・人均 $${formatMoney(avgPerPerson)}`;
-
-            const diningPct = total > 0 ? Math.round((dining / total) * 100) : 0;
-            const transportPct = total > 0 ? Math.round((transport / total) * 100) : 0;
-            const stayPct = total > 0 ? Math.round((stayOther / total) * 100) : 0;
-
-            document.getElementById('statDiningAmount').textContent = `$${formatMoney(dining)}`;
-            document.getElementById('statDiningPct').textContent = `${diningPct}%`;
-            document.getElementById('statDiningBar').style.width = `${diningPct}%`;
-
-            document.getElementById('statTransportAmount').textContent = `$${formatMoney(transport)}`;
-            document.getElementById('statTransportPct').textContent = `${transportPct}%`;
-            document.getElementById('statTransportBar').style.width = `${transportPct}%`;
-
-            document.getElementById('statStayAmount').textContent = `$${formatMoney(stayOther)}`;
-            document.getElementById('statStayPct').textContent = `${stayPct}%`;
-            document.getElementById('statStayBar').style.width = `${stayPct}%`;
-        }
-
-        function renderMembers() {
-            document.getElementById('memberCountBadge').textContent = `${state.members.length} 人`;
-            const container = document.getElementById('membersListContainer');
-            const chipsContainer = document.getElementById('quickColorChips');
-
-            // Render color blocks with distinct color names ("小藍", "小綠", etc.)
-            chipsContainer.innerHTML = COLOR_PRESETS.map((preset, idx) => {
-                const existsCount = state.members.filter(m => m.colorIdx === idx).length;
-                const displayLabel = existsCount > 0 ? `${preset.name}${existsCount + 1}` : preset.name;
-                return `
-                    <button type="button" onclick="addMemberByColor(${idx})" class="py-2 px-2.5 rounded-xl border font-bold text-xs flex items-center justify-center gap-1.5 transition active:scale-95 shadow-2xs ${preset.classes}" title="點擊直接加入「${displayLabel}」">
-                        <span class="w-2.5 h-2.5 rounded-full ${preset.dot} shrink-0"></span>
-                        <span class="truncate">+${displayLabel}</span>
-                    </button>
-                `;
-            }).join('');
-
-            if (state.members.length === 0) {
-                container.innerHTML = `<div class="text-xs text-amber-700 bg-amber-50 px-3 py-2 rounded-xl border border-amber-200 w-full flex items-center gap-1.5"><i class="ph-fill ph-hand-pointing text-base"></i> 請直接點擊上方「+小藍」、「+小綠」等色塊，免打字即可秒速建立分帳名單！</div>`;
-                return;
-            }
-
-            container.innerHTML = state.members.map(m => {
-                const colorClass = AVATAR_COLORS[m.colorIdx % AVATAR_COLORS.length];
-                const initial = m.name.charAt(0);
-                return `
-                    <div class="inline-flex items-center gap-1.5 pl-1.5 pr-2 py-1 rounded-full border text-xs font-semibold ${colorClass} transition">
-                        <span class="w-6 h-6 rounded-full bg-white/90 flex items-center justify-center font-bold shadow-2xs">${escapeHtml(initial)}</span>
-                        <button type="button" onclick="openRenameMemberModal('${m.id}')" class="hover:underline flex items-center gap-1" title="點擊修改名稱">
-                            <span>${escapeHtml(m.name)}</span>
-                            <i class="ph ph-pencil-simple text-[11px] opacity-60"></i>
-                        </button>
-                        <button type="button" onclick="removeMember('${m.id}')" class="opacity-60 hover:opacity-100 ml-1 text-sm leading-none p-0.5" title="移除成員">
-                            <i class="ph-bold ph-x"></i>
-                        </button>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function renderCategoryButtons() {
-            document.querySelectorAll('.cat-btn').forEach(btn => {
-                const cat = btn.dataset.cat;
-                const meta = CATEGORY_META[cat];
-                if (cat === state.form.category) {
-                    btn.className = `cat-btn flex flex-col items-center justify-center p-2.5 rounded-xl border-2 transition text-center ${meta.activeBtnClass}`;
-                } else {
-                    btn.className = `cat-btn flex flex-col items-center justify-center p-2.5 rounded-xl border border-slate-200 hover:border-slate-300 bg-white text-slate-600 transition text-center`;
-                }
-            });
-        }
-
-        function renderQuickPresets() {
-            const meta = CATEGORY_META[state.form.category];
-            const container = document.getElementById('quickPresetsContainer');
-            if (!meta) return;
-            container.innerHTML = meta.presets.map(preset => `
-                <button type="button" onclick="document.getElementById('expenseTitle').value = '${preset}'" class="text-[11px] bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 text-slate-600 px-2.5 py-1 rounded-lg transition font-medium">
-                    + ${preset}
-                </button>
-            `).join('');
-        }
-
-        function renderPayerButtons() {
-            const container = document.getElementById('payerButtonsContainer');
-            const hintEl = document.getElementById('payerModeHint');
-            if (state.members.length === 0) {
-                if (hintEl) hintEl.textContent = '請先新增成員';
-                container.innerHTML = `<span class="text-xs text-slate-400 italic">（請先在上方步驟一點擊色塊新增朋友名單）</span>`;
-                return;
-            }
-
-            const totalAmt = parseFloat(document.getElementById('expenseAmount')?.value) || 0;
-            const payerCount = state.form.payerIds ? state.form.payerIds.length : 0;
-            if (hintEl) {
-                if (payerCount > 1 && totalAmt > 0) {
-                    const perPayer = formatMoney(totalAmt / payerCount);
-                    hintEl.textContent = `已選 ${payerCount} 人平攤代墊 (每人先付 $${perPayer})`;
-                } else if (payerCount > 1) {
-                    hintEl.textContent = `已選 ${payerCount} 人共同平攤代墊`;
-                } else {
-                    hintEl.textContent = '可點選單人或多人共同代墊';
-                }
-            }
-
-            container.innerHTML = state.members.map(m => {
-                const isSelected = state.form.payerIds && state.form.payerIds.includes(m.id);
-                return `
-                    <button
-                        type="button"
-                        onclick="togglePayer('${m.id}')"
-                        class="px-3.5 py-2 rounded-xl text-xs font-semibold border transition flex items-center gap-1.5 active:scale-95 ${
-                            isSelected
-                                ? 'bg-indigo-600 text-white border-indigo-600 shadow-xs'
-                                : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
-                        }"
-                    >
-                        <div class="w-4 h-4 rounded-md flex items-center justify-center ${isSelected ? 'bg-white text-indigo-600' : 'border border-slate-300 bg-white'}">
-                            ${isSelected ? '<i class="ph-bold ph-check text-[10px]"></i>' : ''}
-                        </div>
-                        <span>${escapeHtml(m.name)}</span>
-                    </button>
-                `;
-            }).join('');
-        }
-
-        function renderSplitTabsAndParticipants() {
-            const mode = state.form.splitMode;
-            const tabEqual = document.getElementById('tabSplitEqual');
-            const tabExact = document.getElementById('tabSplitExact');
-            const tabShares = document.getElementById('tabSplitShares');
-
-            const activeTabClass = 'px-2.5 py-1 rounded-lg transition bg-white text-indigo-600 shadow-xs font-semibold';
-            const inactiveTabClass = 'px-2.5 py-1 rounded-lg transition text-slate-600 hover:text-slate-900';
-
-            tabEqual.className = mode === 'equal' ? activeTabClass : inactiveTabClass;
-            tabExact.className = mode === 'exact' ? activeTabClass : inactiveTabClass;
-            tabShares.className = mode === 'shares' ? activeTabClass : inactiveTabClass;
-
-            const hintEl = document.getElementById('splitModeHint');
-            const actionsEl = document.getElementById('equalSelectActions');
-
-            if (mode === 'equal') {
-                hintEl.textContent = '勾選有份參與這筆消費的朋友：';
-                actionsEl.classList.remove('hidden');
-            } else if (mode === 'exact') {
-                hintEl.textContent = '直接輸入每個人各自點餐或消費的金額：';
-                actionsEl.classList.add('hidden');
-            } else {
-                hintEl.textContent = '設定每個人的分攤份數或晚數：';
-                actionsEl.classList.add('hidden');
-            }
-
-            const container = document.getElementById('participantsSplitContainer');
-            if (state.members.length === 0) {
-                container.innerHTML = `<div class="text-xs text-slate-400 py-3 text-center border border-dashed border-slate-200 rounded-xl">請先建立朋友名單</div>`;
-                return;
-            }
-
-            const { splits } = computeCurrentFormSplits();
-
-            container.innerHTML = state.members.map(m => {
-                const p = state.form.participants[m.id] || { included: true, exactAmount: '', shares: 1 };
-                const calculatedShare = splits[m.id] || 0;
-
-                if (mode === 'equal') {
-                    return `
-                        <div onclick="toggleParticipantIncluded('${m.id}')" class="flex items-center justify-between p-2.5 rounded-xl border cursor-pointer transition ${
-                            p.included ? 'bg-indigo-50/50 border-indigo-200' : 'bg-slate-50/60 border-slate-200 opacity-60'
-                        }">
-                            <div class="flex items-center gap-2.5">
-                                <div class="w-5 h-5 rounded-md flex items-center justify-center ${
-                                    p.included ? 'bg-indigo-600 text-white' : 'border border-slate-300 bg-white'
-                                }">
-                                    ${p.included ? '<i class="ph-bold ph-check text-xs"></i>' : ''}
-                                </div>
-                                <span class="text-sm font-semibold text-slate-800">${escapeHtml(m.name)}</span>
-                            </div>
-                            <div class="text-xs font-bold ${p.included ? 'text-indigo-700' : 'text-slate-400'}" data-member-preview="${m.id}">
-                                ${p.included ? `$${formatMoney(calculatedShare)}` : '不參與 ($0)'}
-                            </div>
-                        </div>
-                    `;
-                } else if (mode === 'exact') {
-                    return `
-                        <div class="flex items-center justify-between p-2 rounded-xl border border-slate-200 bg-white">
-                            <span class="text-sm font-semibold text-slate-800 pl-1">${escapeHtml(m.name)}</span>
-                            <div class="relative w-36">
-                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold">$</span>
-                                <input
-                                    type="number"
-                                    step="0.01"
-                                    min="0"
-                                    placeholder="0.00"
-                                    value="${p.exactAmount !== undefined && p.exactAmount !== '' ? p.exactAmount : ''}"
-                                    oninput="updateParticipantExact('${m.id}', this.value)"
-                                    class="w-full text-right text-sm font-bold pl-6 pr-3 py-1.5 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                >
-                            </div>
-                        </div>
-                    `;
-                } else {
-                    return `
-                        <div class="flex items-center justify-between p-2 rounded-xl border border-slate-200 bg-white">
-                            <div>
-                                <span class="text-sm font-semibold text-slate-800 pl-1">${escapeHtml(m.name)}</span>
-                                <span class="text-xs text-indigo-600 font-semibold ml-2" data-member-preview="${m.id}">($${formatMoney(calculatedShare)})</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <button type="button" onclick="adjustParticipantShares('${m.id}', -1)" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center font-bold">-</button>
-                                <span class="w-12 text-center text-xs font-bold text-slate-800">${p.shares || 0} 份</span>
-                                <button type="button" onclick="adjustParticipantShares('${m.id}', 1)" class="w-7 h-7 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold">+</button>
-                            </div>
-                        </div>
-                    `;
-                }
-            }).join('');
-
-            updateSplitPreviewAndValidation();
-        }
-
-        function updateSplitPreviewAndValidation() {
-            const { splits, isValid, errorMessage } = computeCurrentFormSplits();
-            const mode = state.form.splitMode;
-
-            state.members.forEach(m => {
-                const previewEl = document.querySelector(`[data-member-preview="${m.id}"]`);
-                if (previewEl) {
-                    const share = splits[m.id] || 0;
-                    if (mode === 'equal') {
-                        const inc = state.form.participants[m.id]?.included;
-                        previewEl.textContent = inc ? `應攤 $${formatMoney(share)}` : '不參與 ($0)';
-                    } else if (mode === 'shares') {
-                        previewEl.textContent = `($${formatMoney(share)})`;
-                    }
-                }
-            });
-
-            const statusBox = document.getElementById('splitValidationStatus');
-            if (!isValid && errorMessage) {
-                statusBox.classList.remove('hidden');
-                statusBox.className = 'mt-2 text-xs px-3 py-2 rounded-xl font-medium bg-amber-50 text-amber-800 border border-amber-200 flex items-center gap-1.5';
-                statusBox.innerHTML = `<i class="ph-fill ph-warning-circle text-base shrink-0"></i><span>${escapeHtml(errorMessage)}</span>`;
-            } else {
-                statusBox.classList.add('hidden');
-            }
-        }
-
-        function renderExpensesList() {
-            const container = document.getElementById('expensesListContainer');
-            const filtered = state.filterCategory === 'all'
-                ? state.expenses
-                : state.expenses.filter(e => e.category === state.filterCategory);
-
-            if (filtered.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center py-10 px-4 border-2 border-dashed border-slate-200 rounded-2xl text-slate-400">
-                        <i class="ph ph-receipt text-4xl mb-2 block mx-auto opacity-60"></i>
-                        <p class="text-sm font-medium text-slate-500">尚無帳目紀錄</p>
-                        <p class="text-xs mt-1">請先填寫上方表單新增吃飯、車費或住宿等帳目</p>
-                    </div>
-                `;
-                return;
-            }
-
-            container.innerHTML = filtered.map(exp => {
-                const meta = CATEGORY_META[exp.category] || CATEGORY_META.other;
-                const pIds = exp.payerIds && Array.isArray(exp.payerIds) && exp.payerIds.length > 0
-                    ? exp.payerIds
-                    : (exp.payerId ? [exp.payerId] : []);
-                const payerNames = pIds.map(pId => state.members.find(m => m.id === pId)?.name).filter(Boolean).join('、') || '未知';
-
-                const splitSummaryPills = Object.entries(exp.splits || {})
-                    .filter(([, amt]) => amt > 0)
-                    .map(([mId, amt]) => {
-                        const m = state.members.find(x => x.id === mId);
-                        const name = m ? m.name : '未知';
-                        return `<span class="inline-flex items-center gap-1 text-[11px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded-md">${escapeHtml(name)} <strong class="font-semibold">$${formatMoney(amt)}</strong></span>`;
-                    }).join('');
-
-                const modeBadge = exp.splitMode === 'exact'
-                    ? '指定金額'
-                    : exp.splitMode === 'shares'
-                        ? '按份數分攤'
-                        : '平均分攤';
-
-                return `
-                    <div class="p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 hover:border-indigo-200 bg-white transition shadow-2xs">
-                        <div class="flex items-start justify-between gap-3">
-                            <div class="flex items-start gap-3">
-                                <div class="w-10 h-10 rounded-xl border flex items-center justify-center text-xl shrink-0 ${meta.badgeClass}">
-                                    ${meta.icon}
-                                </div>
-                                <div>
-                                    <div class="flex flex-wrap items-center gap-1.5">
-                                        <h3 class="font-bold text-slate-800 text-sm sm:text-base">${escapeHtml(exp.title)}</h3>
-                                        <span class="text-[10px] font-medium px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">${modeBadge}</span>
-                                    </div>
-                                    <div class="text-xs text-slate-500 mt-0.5">
-                                        由 <span class="font-semibold text-indigo-600">${escapeHtml(payerNames)}</span> 先付 · ${meta.label}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="text-right shrink-0">
-                                <div class="text-base sm:text-lg font-extrabold text-slate-900">$${formatMoney(exp.amount)}</div>
-                                <div class="flex items-center justify-end gap-1 mt-1">
-                                    <button onclick="editExpense('${exp.id}')" class="text-xs text-slate-400 hover:text-indigo-600 p-1.5 rounded-lg hover:bg-indigo-50 transition" title="編輯">
-                                        <i class="ph-bold ph-pencil-simple text-sm"></i>
-                                    </button>
-                                    <button onclick="deleteExpense('${exp.id}')" class="text-xs text-slate-400 hover:text-rose-600 p-1.5 rounded-lg hover:bg-rose-50 transition" title="刪除">
-                                        <i class="ph-bold ph-trash text-sm"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mt-3 pt-2.5 border-t border-slate-100 flex flex-wrap items-center gap-1.5">
-                            <span class="text-[11px] text-slate-400 mr-1">分攤明細：</span>
-                            ${splitSummaryPills}
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function renderSettlementAndBalances() {
-            const { balances, transfers } = calculateBalancesAndSettlements();
-
-            const transfersContainer = document.getElementById('settlementTransfersContainer');
             if (transfers.length === 0) {
-                transfersContainer.innerHTML = `
-                    <div class="bg-white/10 rounded-xl p-4 text-center text-slate-300 text-xs">
-                        <i class="ph-fill ph-sparkle text-emerald-400 text-2xl mb-1 block mx-auto"></i>
-                        目前尚無帳目或所有帳目已平衡！
-                    </div>
-                `;
+                settlementContainer.innerHTML = `<div class="text-center py-4 text-slate-400 text-xs italic bg-white/5 rounded-xl">目前帳目已平或尚無記錄</div>`;
             } else {
-                transfersContainer.innerHTML = transfers.map(t => {
-                    const isSettled = !!state.settledKeys[t.key];
-                    return `
-                        <div onclick="toggleTransferSettled('${t.key}')" class="flex items-center justify-between p-3 rounded-xl border transition cursor-pointer ${
-                            isSettled
-                                ? 'bg-slate-800/50 border-slate-700/60 opacity-60'
-                                : 'bg-white/10 hover:bg-white/15 border-white/15'
-                        }">
-                            <div class="flex items-center gap-2.5">
-                                <button type="button" class="w-5 h-5 rounded-md flex items-center justify-center transition ${
-                                    isSettled ? 'bg-emerald-500 text-slate-950' : 'border border-slate-400 text-transparent'
-                                }">
-                                    <i class="ph-bold ph-check text-xs"></i>
-                                </button>
-                                <div class="text-xs sm:text-sm">
-                                    <span class="font-bold text-rose-300 ${isSettled ? 'line-through' : ''}">${escapeHtml(t.fromName)}</span>
-                                    <span class="text-slate-400 mx-1.5"><i class="ph-bold ph-arrow-right"></i> 給</span>
-                                    <span class="font-bold text-emerald-300 ${isSettled ? 'line-through' : ''}">${escapeHtml(t.toName)}</span>
+                transfers.forEach((t, i) => {
+                    const key = `${t.from}_${t.to}_${t.amount.toFixed(1)}`;
+                    const isPaid = !!paidTransfers[key];
+
+                    const item = document.createElement("div");
+                    item.className = `p-3 rounded-xl border transition flex items-center justify-between cursor-pointer ${isPaid ? 'bg-emerald-950/40 border-emerald-500/30 text-emerald-200' : 'bg-white/10 border-white/10 text-white'}`;
+                    item.onclick = () => {
+                        paidTransfers[key] = !isPaid;
+                        saveToLocalStorage();
+                        renderStatsAndSettlements();
+                    };
+                    item.innerHTML = `
+                        <div class="flex items-center gap-2 min-w-0">
+                            <span class="w-6 h-6 rounded-lg ${isPaid ? 'bg-emerald-500 text-slate-950' : 'bg-white/20 text-white'} flex items-center justify-center text-xs shrink-0 font-bold">${i+1}</span>
+                            <div class="min-w-0">
+                                <div class="text-xs font-bold truncate">
+                                    <span class="text-indigo-300">${t.from}</span> ➔ <span class="text-emerald-300">${t.to}</span>
                                 </div>
+                                <div class="text-[10px] text-slate-300">${isPaid ? '✓ 已標記轉帳完成' : '點擊標記已付清'}</div>
                             </div>
-                            <div class="text-right">
-                                <span class="text-sm sm:text-base font-extrabold ${isSettled ? 'line-through text-slate-400' : 'text-white'}">
-                                    $${formatMoney(t.amount)}
-                                </span>
-                                <span class="block text-[10px] ${isSettled ? 'text-emerald-400' : 'text-slate-400'}">
-                                    ${isSettled ? '已結清 ✓' : '點擊標記已付'}
-                                </span>
-                            </div>
+                        </div>
+                        <div class="text-right shrink-0">
+                            <div class="text-sm font-extrabold text-emerald-400">${targetSym}${t.amount.toFixed(2)}</div>
                         </div>
                     `;
-                }).join('');
+                    settlementContainer.appendChild(item);
+                });
             }
-
-            const balancesContainer = document.getElementById('memberBalancesContainer');
-            if (state.members.length === 0) {
-                balancesContainer.innerHTML = `<div class="text-xs text-slate-400 text-center py-4">尚無成員收支資料</div>`;
-                return;
-            }
-
-            balancesContainer.innerHTML = Object.values(balances).map(b => {
-                const isPositive = b.net > 0.01;
-                const isNegative = b.net < -0.01;
-                const netColor = isPositive
-                    ? 'text-emerald-600 bg-emerald-50 border-emerald-200'
-                    : isNegative
-                        ? 'text-rose-600 bg-rose-50 border-rose-200'
-                        : 'text-slate-500 bg-slate-100 border-slate-200';
-
-                const netLabel = isPositive
-                    ? `應收回 +$${formatMoney(b.net)}`
-                    : isNegative
-                        ? `應付給人 -$${formatMoney(Math.abs(b.net))}`
-                        : '已結清 $0';
-
-                const colorClass = AVATAR_COLORS[b.member.colorIdx % AVATAR_COLORS.length];
-
-                return `
-                    <div class="p-3 rounded-xl border border-slate-100 bg-slate-50/60 flex items-center justify-between gap-2">
-                        <div class="flex items-center gap-2.5">
-                            <div class="w-8 h-8 rounded-full border flex items-center justify-center font-bold text-xs ${colorClass}">
-                                ${escapeHtml(b.member.name.charAt(0))}
-                            </div>
-                            <div>
-                                <div class="font-bold text-slate-800 text-sm">${escapeHtml(b.member.name)}</div>
-                                <div class="text-[11px] text-slate-500">
-                                    先付 <strong class="text-slate-700">$${formatMoney(b.paid)}</strong> · 應攤 <strong class="text-slate-700">$${formatMoney(b.owed)}</strong>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="text-xs font-bold px-2.5 py-1 rounded-lg border ${netColor}">
-                            ${netLabel}
-                        </div>
-                    </div>
-                `;
-            }).join('');
         }
 
-        // ==========================================
-        // Share / Copy Summary Text
-        // ==========================================
         function copySummaryToClipboard() {
-            const { balances, transfers } = calculateBalancesAndSettlements();
-            let total = 0;
-            let dining = 0, transport = 0, stay = 0, other = 0;
+            const targetCur = appData.settlementCurrency;
+            const targetSym = currencies[targetCur].symbol;
+            
+            let text = `【 ${appData.title} 結算報告 】\n`;
+            text += `結算幣種：${currencies[targetCur].name} (${targetCur})\n`;
+            text += `--------------------------------\n`;
+            
+            let totalAmount = 0;
+            appData.expenses.forEach(exp => {
+                const expCur = exp.currency || "HKD";
+                const rateToTarget = currencies[expCur].rate / currencies[targetCur].rate;
+                totalAmount += exp.amount * rateToTarget;
+            });
+            text += `總支出金額：${targetSym}${totalAmount.toFixed(2)} (共 ${appData.expenses.length} 筆)\n\n`;
 
-            state.expenses.forEach(e => {
-                total += e.amount;
-                if (e.category === 'dining') dining += e.amount;
-                else if (e.category === 'transport') transport += e.amount;
-                else if (e.category === 'stay') stay += e.amount;
-                else other += e.amount;
+            text += `【 最佳轉帳方案 】\n`;
+            let netMap = {};
+            appData.members.forEach(m => netMap[m.name] = 0);
+            appData.expenses.forEach(exp => {
+                const expCur = exp.currency || "HKD";
+                const rateToTarget = currencies[expCur].rate / currencies[targetCur].rate;
+                Object.entries(exp.payers).forEach(([name, amt]) => {
+                    if (netMap[name] !== undefined) netMap[name] += amt * rateToTarget;
+                });
+                Object.entries(exp.splits).forEach(([name, amt]) => {
+                    if (netMap[name] !== undefined) netMap[name] -= amt * rateToTarget;
+                });
             });
 
-            let lines = [];
-            lines.push(`🧾 【${state.tripTitle} - 分帳結算表】`);
-            lines.push(`━━━━━━━━━━━━━━`);
-            lines.push(`💰 總支出：$${formatMoney(total)} (共 ${state.expenses.length} 筆)`);
-            const catParts = [];
-            if (dining > 0) catParts.push(`🍽️ 吃飯 $${formatMoney(dining)}`);
-            if (transport > 0) catParts.push(`🚕 車費 $${formatMoney(transport)}`);
-            if (stay > 0) catParts.push(`🏨 住宿 $${formatMoney(stay)}`);
-            if (other > 0) catParts.push(`🎟️ 其他 $${formatMoney(other)}`);
-            if (catParts.length > 0) {
-                lines.push(`📊 分類：${catParts.join('｜')}`);
-            }
-            lines.push(``);
-            lines.push(`💸 【最佳轉帳結算方案】`);
-            if (transfers.length === 0) {
-                lines.push(`✅ 所有帳目已平手，無須轉帳！`);
-            } else {
-                transfers.forEach(t => {
-                    const status = state.settledKeys[t.key] ? ' (已結清✅)' : '';
-                    lines.push(`👉 ${t.fromName} ➔ 轉帳給 ${t.toName}：$${formatMoney(t.amount)}${status}`);
-                });
-            }
-
-            lines.push(``);
-            lines.push(`👥 【每人收支明細】`);
-            Object.values(balances).forEach(b => {
-                const netText = b.net > 0.01
-                    ? `應收 +$${formatMoney(b.net)}`
-                    : b.net < -0.01
-                        ? `應付 -$${formatMoney(Math.abs(b.net))}`
-                        : `剛平手`;
-                lines.push(`• ${b.member.name}：先付 $${formatMoney(b.paid)}｜應攤 $${formatMoney(b.owed)} (${netText})`);
+            let debtors = [];
+            let creditors = [];
+            appData.members.forEach(m => {
+                const net = netMap[m.name] || 0;
+                if (net < -0.01) debtors.push({ name: m.name, amount: -net });
+                if (net > 0.01) creditors.push({ name: m.name, amount: net });
             });
+            debtors.sort((a, b) => b.amount - a.amount);
+            creditors.sort((a, b) => b.amount - a.amount);
 
-            if (state.expenses.length > 0) {
-                lines.push(``);
-                lines.push(`📝 【帳目清單】`);
-                state.expenses.forEach((e, idx) => {
-                    const meta = CATEGORY_META[e.category] || CATEGORY_META.other;
-                    const pIds = e.payerIds && Array.isArray(e.payerIds) && e.payerIds.length > 0 ? e.payerIds : (e.payerId ? [e.payerId] : []);
-                    const payerNames = pIds.map(id => state.members.find(m => m.id === id)?.name).filter(Boolean).join('、') || '';
-                    lines.push(`${idx + 1}. ${meta.icon} ${e.title}：$${formatMoney(e.amount)} (${payerNames}先付)`);
-                });
+            let dIdx = 0, cIdx = 0;
+            let count = 1;
+            while (dIdx < debtors.length && cIdx < creditors.length) {
+                let debtor = debtors[dIdx];
+                let creditor = creditors[cIdx];
+                let transferAmt = Math.min(debtor.amount, creditor.amount);
+                if (transferAmt > 0.01) {
+                    text += `${count}. ${debtor.name} 轉給 ${creditor.name} : ${targetSym}${transferAmt.toFixed(2)}\n`;
+                    count++;
+                }
+                debtor.amount -= transferAmt;
+                creditor.amount -= transferAmt;
+                if (debtor.amount < 0.01) dIdx++;
+                if (creditor.amount < 0.01) cIdx++;
             }
 
-            const textToCopy = lines.join('\n');
-            const textarea = document.createElement('textarea');
-            textarea.value = textToCopy;
-            textarea.style.position = 'fixed';
-            textarea.style.opacity = '0';
-            document.body.appendChild(textarea);
-            textarea.select();
+            text += `\n祝大家聚會愉快、旅途平安！`;
+
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
             try {
                 document.execCommand('copy');
-                showToast('已複製完整分帳結果！可直接貼上至 WhatsApp 或 LINE');
+                showToast("已成功複製完整結算結果！");
             } catch (err) {
-                showToast('複製失敗，請手動選取', 'warning');
+                showToast("複製失敗，請手動複製");
             }
-            document.body.removeChild(textarea);
+            document.body.removeChild(textArea);
         }
-
-        // ==========================================
-        // Modals & Utilities
-        // ==========================================
-        function openTitleModal() {
-            const modal = document.getElementById('titleModal');
-            const input = document.getElementById('tripTitleInput');
-            input.value = state.tripTitle;
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            input.focus();
-        }
-
-        function closeTitleModal() {
-            const modal = document.getElementById('titleModal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        }
-
-        function saveTripTitle() {
-            const val = document.getElementById('tripTitleInput').value.trim();
-            if (val) {
-                state.tripTitle = val;
-                saveStateToStorage();
-                renderAll();
-                showToast('已更新名稱');
-            }
-            closeTitleModal();
-        }
-
-        function openConfirmResetModal() {
-            const modal = document.getElementById('confirmResetModal');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-        }
-
-        function closeConfirmResetModal() {
-            const modal = document.getElementById('confirmResetModal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        }
-
-        function clearExpensesOnly() {
-            state.expenses = [];
-            state.settledKeys = {};
-            saveStateToStorage();
-            resetExpenseForm();
-            renderAll();
-            closeConfirmResetModal();
-            showToast('已清空所有帳目紀錄（保留朋友名單）');
-        }
-
-        function clearAllData() {
-            state.tripTitle = '我的聚會與旅遊分帳';
-            state.members = [];
-            state.expenses = [];
-            state.settledKeys = {};
-            saveStateToStorage();
-            resetExpenseForm();
-            renderAll();
-            closeConfirmResetModal();
-            showToast('已完全重設所有資料');
-        }
-
-        let toastTimer = null;
-        function showToast(message, type = 'success') {
-            const box = document.getElementById('toastBox');
-            const icon = document.getElementById('toastIcon');
-            const msg = document.getElementById('toastMessage');
-
-            msg.textContent = message;
-            if (type === 'warning') {
-                icon.className = 'ph-fill ph-warning-circle text-amber-400 text-lg';
-            } else {
-                icon.className = 'ph-fill ph-check-circle text-emerald-400 text-lg';
-            }
-
-            box.classList.remove('hidden');
-            box.classList.add('flex');
-
-            if (toastTimer) clearTimeout(toastTimer);
-            toastTimer = setTimeout(() => {
-                box.classList.add('hidden');
-                box.classList.remove('flex');
-            }, 3000);
-        }
-
-        function formatMoney(num) {
-            const n = Number(num) || 0;
-            return Number.isInteger(n) ? n.toLocaleString('en-US') : n.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 2 });
-        }
-
-        function escapeHtml(str) {
-            return String(str)
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#039;');
-        }
-
-        // Start app on load with 0 pre-defaults
-        window.onload = function () {
-            initApp();
-        };
     </script>
 </body>
 </html>
